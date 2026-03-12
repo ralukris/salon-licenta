@@ -125,10 +125,17 @@ function AdminDashboard({ token, user, onLogout }) {
   });
 
   const [showManualBookingForm, setShowManualBookingForm] = useState(false);
-  const [clientSearch, setClientSearch] = useState("");
-  const [clientResults, setClientResults] = useState([]);
-  const [searchingClients, setSearchingClients] = useState(false);
+
+  // Programari - client search
+  const [manualClientSearch, setManualClientSearch] = useState("");
+  const [manualClientResults, setManualClientResults] = useState([]);
+  const [searchingManualClients, setSearchingManualClients] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+
+  // Tab clienti - search separat
+  const [clientsTabSearch, setClientsTabSearch] = useState("");
+  const [clientsTabResults, setClientsTabResults] = useState([]);
+  const [searchingClientsTab, setSearchingClientsTab] = useState(false);
 
   const [showNewClientForm, setShowNewClientForm] = useState(false);
   const [creatingClient, setCreatingClient] = useState(false);
@@ -388,8 +395,8 @@ function AdminDashboard({ token, user, onLogout }) {
   }, [services, serviceSearch]);
 
   const resetManualBooking = () => {
-    setClientSearch("");
-    setClientResults([]);
+    setManualClientSearch("");
+    setManualClientResults([]);
     setSelectedClient(null);
     setShowNewClientForm(false);
     setCreatingClient(false);
@@ -398,14 +405,6 @@ function AdminDashboard({ token, user, onLogout }) {
       prenume: "",
       telefon: "",
       data_nasterii: "",
-    });
-    setEditingClientId(null);
-    setEditingClient({
-      nume: "",
-      prenume: "",
-      telefon: "",
-      data_nasterii: "",
-      email: "",
     });
     setManualBooking({
       id_serviciu: "",
@@ -559,40 +558,78 @@ function AdminDashboard({ token, user, onLogout }) {
   useEffect(() => {
     const controller = new AbortController();
 
-    const searchClients = async () => {
-      const term = clientSearch.trim();
+    const searchManualClients = async () => {
+      const term = manualClientSearch.trim();
 
       if (term.length < 2) {
-        setClientResults([]);
-        setSearchingClients(false);
+        setManualClientResults([]);
+        setSearchingManualClients(false);
         return;
       }
 
-      setSearchingClients(true);
+      setSearchingManualClients(true);
 
       try {
         const data = await searchClientsApi(token, term, controller.signal);
         setError("");
-        setClientResults(data);
+        setManualClientResults(data);
       } catch (err) {
         if (!controller.signal.aborted) {
-          setClientResults([]);
+          setManualClientResults([]);
           setError(err.message);
         }
       } finally {
         if (!controller.signal.aborted) {
-          setSearchingClients(false);
+          setSearchingManualClients(false);
         }
       }
     };
 
-    const timer = setTimeout(searchClients, 300);
+    const timer = setTimeout(searchManualClients, 300);
 
     return () => {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [clientSearch, token]);
+  }, [manualClientSearch, token]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const searchClientsTab = async () => {
+      const term = clientsTabSearch.trim();
+
+      if (term.length < 2) {
+        setClientsTabResults([]);
+        setSearchingClientsTab(false);
+        return;
+      }
+
+      setSearchingClientsTab(true);
+
+      try {
+        const data = await searchClientsApi(token, term, controller.signal);
+        setError("");
+        setClientsTabResults(data);
+      } catch (err) {
+        if (!controller.signal.aborted) {
+          setClientsTabResults([]);
+          setError(err.message);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setSearchingClientsTab(false);
+        }
+      }
+    };
+
+    const timer = setTimeout(searchClientsTab, 300);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [clientsTabSearch, token]);
 
   useEffect(() => {
     const fetchManualBookingEmployees = async () => {
@@ -1108,10 +1145,10 @@ function AdminDashboard({ token, user, onLogout }) {
       });
 
       setSelectedClient(data.client);
-      setClientSearch(
+      setManualClientSearch(
         `${data.client.nume || ""} ${data.client.prenume || ""} ${data.client.telefon || ""}`.trim()
       );
-      setClientResults([data.client]);
+      setManualClientResults([data.client]);
 
       setNewClient({
         nume: "",
@@ -1125,10 +1162,10 @@ function AdminDashboard({ token, user, onLogout }) {
     } catch (err) {
       if (err.data?.client) {
         setSelectedClient(err.data.client);
-        setClientSearch(
+        setManualClientSearch(
           `${err.data.client.nume || ""} ${err.data.client.prenume || ""} ${err.data.client.telefon || ""}`.trim()
         );
-        setClientResults([err.data.client]);
+        setManualClientResults([err.data.client]);
       }
       setError(err.message);
     } finally {
@@ -1138,8 +1175,6 @@ function AdminDashboard({ token, user, onLogout }) {
 
   const startEditClient = (client) => {
     clearMessages();
-    setSelectedClient(client);
-    setShowNewClientForm(false);
     setEditingClientId(client.id_client);
     setEditingClient({
       nume: client.nume || "",
@@ -1189,16 +1224,12 @@ function AdminDashboard({ token, user, onLogout }) {
         email: editingClient.email.trim(),
       });
 
-      setSelectedClient(data.client);
-      setClientResults((prev) =>
+      setClientsTabResults((prev) =>
         prev.map((client) =>
           Number(client.id_client) === Number(editingClientId)
             ? data.client
             : client
         )
-      );
-      setClientSearch(
-        `${data.client.nume || ""} ${data.client.prenume || ""} ${data.client.telefon || ""}`.trim()
       );
       setMessage(data.message || "Client actualizat cu succes.");
       cancelEditClient();
@@ -1449,224 +1480,77 @@ function AdminDashboard({ token, user, onLogout }) {
       {error && <div className="message error">{error}</div>}
 
       {activeTab === "programari" && (
-        <>
-          <ProgramariTab
-            clearMessages={clearMessages}
-    showManualBookingForm={showManualBookingForm}
-    setShowManualBookingForm={setShowManualBookingForm}
-    resetManualBooking={resetManualBooking}
-    bookingSearch={bookingSearch}
-    setBookingSearch={setBookingSearch}
-    bookingStatusFilter={bookingStatusFilter}
-    setBookingStatusFilter={setBookingStatusFilter}
-    handleManualBookingSubmit={handleManualBookingSubmit}
-    clientSearch={clientSearch}
-    setClientSearch={setClientSearch}
-    selectedClient={selectedClient}
-    setSelectedClient={setSelectedClient}
-    showNewClientForm={showNewClientForm}
-    setShowNewClientForm={setShowNewClientForm}
-    newClient={newClient}
-    setNewClient={setNewClient}
-    todayForInput={todayForInput}
-    handleCreateNewClient={handleCreateNewClient}
-    creatingClient={creatingClient}
-    searchingClients={searchingClients}
-    clientResults={clientResults}
-    manualBooking={manualBooking}
-    setManualBooking={setManualBooking}
-    maxBookingDate={maxBookingDate}
-    manualBookingSegments={manualBookingSegments}
-    handleRemoveManualSegment={handleRemoveManualSegment}
-    manualBookingTotalDuration={manualBookingTotalDuration}
-    manualBookingTotalPrice={manualBookingTotalPrice}
-    loadingServices={loadingServices}
-    services={services}
-    loadingManualBookingEmployees={loadingManualBookingEmployees}
-    manualBookingEmployees={manualBookingEmployees}
-    handleAddManualSegment={handleAddManualSegment}
-    loadingManualSlots={loadingManualSlots}
-    availableManualSlots={availableManualSlots}
-    selectedManualService={selectedManualService}
-    computedManualSchedule={computedManualSchedule}
-    formatTimeHHMM={formatTimeHHMM}
-    submittingManualBooking={submittingManualBooking}
-    loadingBookings={loadingBookings}
-    filteredBookings={filteredBookings}
-    formatDateTime={formatDateTime}
-    handleFinalizeBooking={handleFinalizeBooking}
-    handleCancelBooking={handleCancelBooking}
-    handleIssueReceipt={handleIssueReceipt}
-          />
+        <ProgramariTab
+          clearMessages={clearMessages}
+          showManualBookingForm={showManualBookingForm}
+          setShowManualBookingForm={setShowManualBookingForm}
+          resetManualBooking={resetManualBooking}
+          bookingSearch={bookingSearch}
+          setBookingSearch={setBookingSearch}
+          bookingStatusFilter={bookingStatusFilter}
+          setBookingStatusFilter={setBookingStatusFilter}
+          handleManualBookingSubmit={handleManualBookingSubmit}
+          clientSearch={manualClientSearch}
+          setClientSearch={setManualClientSearch}
+          selectedClient={selectedClient}
+          setSelectedClient={setSelectedClient}
+          showNewClientForm={showNewClientForm}
+          setShowNewClientForm={setShowNewClientForm}
+          newClient={newClient}
+          setNewClient={setNewClient}
+          todayForInput={todayForInput}
+          handleCreateNewClient={handleCreateNewClient}
+          creatingClient={creatingClient}
+          searchingClients={searchingManualClients}
+          clientResults={manualClientResults}
+          manualBooking={manualBooking}
+          setManualBooking={setManualBooking}
+          maxBookingDate={maxBookingDate}
+          manualBookingSegments={manualBookingSegments}
+          handleRemoveManualSegment={handleRemoveManualSegment}
+          manualBookingTotalDuration={manualBookingTotalDuration}
+          manualBookingTotalPrice={manualBookingTotalPrice}
+          loadingServices={loadingServices}
+          services={services}
+          loadingManualBookingEmployees={loadingManualBookingEmployees}
+          manualBookingEmployees={manualBookingEmployees}
+          handleAddManualSegment={handleAddManualSegment}
+          loadingManualSlots={loadingManualSlots}
+          availableManualSlots={availableManualSlots}
+          selectedManualService={selectedManualService}
+          computedManualSchedule={computedManualSchedule}
+          formatTimeHHMM={formatTimeHHMM}
+          submittingManualBooking={submittingManualBooking}
+          loadingBookings={loadingBookings}
+          filteredBookings={filteredBookings}
+          formatDateTime={formatDateTime}
+          handleFinalizeBooking={handleFinalizeBooking}
+          handleCancelBooking={handleCancelBooking}
+          handleIssueReceipt={handleIssueReceipt}
+        />
+      )}
 
-          {selectedClient && (
-            <div className="panel" style={{ marginTop: 16 }}>
-              <h3 className="section-title">Client selectat</h3>
-              <div className="muted-text">
-                {selectedClient.nume} {selectedClient.prenume}
-              </div>
-              <div className="muted-text">
-                Telefon: {selectedClient.telefon || "-"}
-              </div>
-              <div className="muted-text">
-                Data nașterii: {formatDateOnly(selectedClient.data_nasterii)}
-              </div>
-              <div className="muted-text">
-                Email: {selectedClient.email || "-"}
-              </div>
-
-              <div className="inline-actions" style={{ marginTop: 12 }}>
-                <button
-                  type="button"
-                  className="secondary-btn"
-                  onClick={() => startEditClient(selectedClient)}
-                >
-                  Editează clientul
-                </button>
-              </div>
-            </div>
-          )}
-
-          {clientResults.length > 0 && (
-            <div className="panel" style={{ marginTop: 16 }}>
-              <h3 className="section-title">Rezultate clienți</h3>
-
-              <div className="profiles-list">
-                {clientResults.map((client) => (
-                  <div key={client.id_client} className="profile-item">
-                    <strong>
-                      {client.nume} {client.prenume}
-                    </strong>
-
-                    <div className="muted-text">
-                      Telefon: {client.telefon || "-"}
-                    </div>
-
-                    <div className="muted-text">
-                      Data nașterii: {formatDateOnly(client.data_nasterii)}
-                    </div>
-
-                    <div className="muted-text">
-                      Email: {client.email || "-"}
-                    </div>
-
-                    <div className="inline-actions" style={{ marginTop: 12 }}>
-                      <button
-                        type="button"
-                        className="secondary-btn"
-                        onClick={() => {
-                          setSelectedClient(client);
-                          setClientSearch(
-                            `${client.nume || ""} ${client.prenume || ""} ${client.telefon || ""}`.trim()
-                          );
-                        }}
-                      >
-                        Selectează
-                      </button>
-
-                      <button
-                        type="button"
-                        className="secondary-btn"
-                        onClick={() => startEditClient(client)}
-                      >
-                        Editează clientul
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {editingClientId && (
-            <div className="panel" style={{ marginTop: 16 }}>
-              <h3 className="section-title">Editează client</h3>
-
-              <div className="form-grid">
-                <input
-                  type="text"
-                  placeholder="Nume"
-                  value={editingClient.nume}
-                  onChange={(e) =>
-                    setEditingClient((prev) => ({
-                      ...prev,
-                      nume: e.target.value,
-                    }))
-                  }
-                />
-
-                <input
-                  type="text"
-                  placeholder="Prenume"
-                  value={editingClient.prenume}
-                  onChange={(e) =>
-                    setEditingClient((prev) => ({
-                      ...prev,
-                      prenume: e.target.value,
-                    }))
-                  }
-                />
-
-                <input
-                  type="text"
-                  placeholder="Telefon"
-                  value={editingClient.telefon}
-                  onChange={(e) =>
-                    setEditingClient((prev) => ({
-                      ...prev,
-                      telefon: e.target.value,
-                    }))
-                  }
-                />
-
-                <div>
-                  <label className="field-label">Data nașterii</label>
-                  <input
-                    type="date"
-                    max={todayForInput}
-                    value={editingClient.data_nasterii}
-                    onChange={(e) =>
-                      setEditingClient((prev) => ({
-                        ...prev,
-                        data_nasterii: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-
-                <input
-                  type="email"
-                  placeholder="Email (doar dacă are cont)"
-                  value={editingClient.email}
-                  onChange={(e) =>
-                    setEditingClient((prev) => ({
-                      ...prev,
-                      email: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-
-              <div className="inline-actions" style={{ marginTop: 14 }}>
-                <button
-                  type="button"
-                  className="primary-btn"
-                  onClick={handleUpdateClient}
-                >
-                  Salvează modificările
-                </button>
-
-                <button
-                  type="button"
-                  className="secondary-btn"
-                  onClick={cancelEditClient}
-                >
-                  Renunță
-                </button>
-              </div>
-            </div>
-          )}
-        </>
+      {activeTab === "clienti" && (
+        <ClientiTab
+          clientSearch={clientsTabSearch}
+          setClientSearch={setClientsTabSearch}
+          searchingClients={searchingClientsTab}
+          clientResults={clientsTabResults}
+          showNewClientForm={showNewClientForm}
+          setShowNewClientForm={setShowNewClientForm}
+          newClient={newClient}
+          setNewClient={setNewClient}
+          todayForInput={todayForInput}
+          handleCreateNewClient={handleCreateNewClient}
+          creatingClient={creatingClient}
+          editingClientId={editingClientId}
+          editingClient={editingClient}
+          setEditingClient={setEditingClient}
+          startEditClient={startEditClient}
+          cancelEditClient={cancelEditClient}
+          handleUpdateClient={handleUpdateClient}
+          formatDateOnly={formatDateOnly}
+        />
       )}
 
       {activeTab === "angajati" && (
@@ -1771,31 +1655,6 @@ function AdminDashboard({ token, user, onLogout }) {
           filteredReceiptsHistory={filteredReceiptsHistory}
         />
       )}
-
-      {activeTab === "clienti" && (
-  <ClientiTab
-    clientSearch={clientSearch}
-    setClientSearch={setClientSearch}
-    searchingClients={searchingClients}
-    clientResults={clientResults}
-    selectedClient={selectedClient}
-    setSelectedClient={setSelectedClient}
-    showNewClientForm={showNewClientForm}
-    setShowNewClientForm={setShowNewClientForm}
-    newClient={newClient}
-    setNewClient={setNewClient}
-    todayForInput={todayForInput}
-    handleCreateNewClient={handleCreateNewClient}
-    creatingClient={creatingClient}
-    editingClientId={editingClientId}
-    editingClient={editingClient}
-    setEditingClient={setEditingClient}
-    startEditClient={startEditClient}
-    cancelEditClient={cancelEditClient}
-    handleUpdateClient={handleUpdateClient}
-    formatDateOnly={formatDateOnly}
-  />
-)}
     </div>
   );
 }

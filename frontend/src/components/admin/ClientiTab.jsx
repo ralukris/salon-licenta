@@ -3,8 +3,6 @@ function ClientiTab({
   setClientSearch,
   searchingClients,
   clientResults,
-  selectedClient,
-  setSelectedClient,
   showNewClientForm,
   setShowNewClientForm,
   newClient,
@@ -116,48 +114,35 @@ function ClientiTab({
 
       {clientResults.length > 0 && (
         <div className="profiles-list">
-          {clientResults.map((client) => {
-            const isSelected =
-              Number(selectedClient?.id_client) === Number(client.id_client);
+          {clientResults.map((client) => (
+            <div key={client.id_client} className="profile-item">
+              <strong>
+                {client.nume} {client.prenume}
+              </strong>
 
-            return (
-              <div key={client.id_client} className="profile-item">
-                <strong>
-                  {client.nume} {client.prenume}
-                </strong>
-
-                <div className="muted-text">
-                  Telefon: {client.telefon || "-"}
-                </div>
-
-                <div className="muted-text">
-                  Email: {client.email || "-"}
-                </div>
-
-                <div className="muted-text">
-                  Data nașterii: {formatDateOnly(client.data_nasterii)}
-                </div>
-
-                <div className="inline-actions" style={{ marginTop: 12 }}>
-                  <button
-                    type="button"
-                    className={isSelected ? "primary-btn" : "secondary-btn"}
-                    onClick={() => setSelectedClient(client)}
-                  >
-                    {isSelected ? "Client selectat" : "Selectează"}
-                  </button>
-
-                  <button
-                    type="button"
-                    className="secondary-btn"
-                    onClick={() => startEditClient(client)}
-                  >
-                    Editează
-                  </button>
-                </div>
+              <div className="muted-text">
+                Telefon: {client.telefon || "-"}
               </div>
-            );
-          })}
+
+              <div className="muted-text">
+                Email: {client.email || "-"}
+              </div>
+
+              <div className="muted-text">
+                Data nașterii: {formatDateOnly(client.data_nasterii)}
+              </div>
+
+              <div className="inline-actions" style={{ marginTop: 12 }}>
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={() => startEditClient(client)}
+                >
+                  Editează
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
