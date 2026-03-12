@@ -386,30 +386,18 @@ function App() {
   };
 
   const renderFixedLogo = () => {
-    if (!token || !role) return null;
+  if (!token || !role) return null;
 
-    return (
-      <div
-        style={{
-          position: "fixed",
-          top: "18px",
-          left: "22px",
-          zIndex: 1000,
-          pointerEvents: "none",
-        }}
-      >
-        <img
-          src={logo}
-          alt="Raluca's Beauty Salon"
-          style={{
-            width: "95px",
-            height: "auto",
-            opacity: 0.95,
-          }}
-        />
-      </div>
-    );
-  };
+  return (
+    <div className="logged-logo-wrapper">
+      <img
+        src={logo}
+        alt="Raluca's Beauty Salon"
+        className="logged-logo"
+      />
+    </div>
+  );
+};
 
   const renderAuthPage = () => (
     <div className="app-shell">
