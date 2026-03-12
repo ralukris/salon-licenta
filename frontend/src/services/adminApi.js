@@ -180,7 +180,9 @@ export async function createUnavailability(token, payload) {
   const data = await parseJsonSafe(res);
 
   if (!res.ok) {
-    throw new Error(getErrorMessage(data, "Eroare la adăugarea indisponibilității."));
+    throw new Error(
+      getErrorMessage(data, "Eroare la adăugarea indisponibilității.")
+    );
   }
 
   return data;
@@ -468,7 +470,32 @@ export async function createClient(token, payload) {
   const data = await parseJsonSafe(res);
 
   if (!res.ok) {
-    const err = new Error(getErrorMessage(data, "Eroare la adăugarea clientului."));
+    const err = new Error(
+      getErrorMessage(data, "Eroare la adăugarea clientului.")
+    );
+    err.data = data;
+    throw err;
+  }
+
+  return data;
+}
+
+export async function updateClient(token, idClient, payload) {
+  const res = await fetch(`${API_BASE}/admin/clienti/${idClient}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await parseJsonSafe(res);
+
+  if (!res.ok) {
+    const err = new Error(
+      getErrorMessage(data, "Eroare la actualizarea clientului.")
+    );
     err.data = data;
     throw err;
   }

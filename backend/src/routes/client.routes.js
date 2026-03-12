@@ -87,6 +87,67 @@ router.post("/client/profiles", requireAuth, async (req, res) => {
 });
 
 // ======================
+// UPDATE profil existent (doar din contul clientului logat)
+// ======================
+router.patch("/client/profiles/:id_client", requireAuth, async (req, res) => {
+  const id_client = Number(req.params.id_client);
+  const { nume, prenume, data_nasterii } = req.body;
+
+  if (!Number.isInteger(id_client)) {
+    return res.status(400).json({ error: "ID client invalid" });
+  }
+
+  if (!nume || !prenume || !data_nasterii) {
+    return res.status(400).json({
+      error: "Lipsesc câmpuri: nume, prenume, data_nasterii",
+    });
+  }
+
+  try {
+    const id_cont = req.user.id_cont;
+
+    const result = await db.query(
+      `
+      UPDATE clienti
+      SET
+        nume = $1,
+        prenume = $2,
+        data_nasterii = $3
+      WHERE id_client = $4
+        AND id_cont = $5
+      RETURNING id_client, nume, prenume, data_nasterii, telefon
+      `,
+      [
+        String(nume).trim(),
+        String(prenume).trim(),
+        data_nasterii,
+        id_client,
+        id_cont,
+      ]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Profil inexistent sau nu ai acces la el",
+      });
+    }
+
+    return res.json({
+      message: "Profil actualizat cu succes",
+      profile: result.rows[0],
+    });
+  } catch (err) {
+    console.error("Eroare PATCH /client/profiles/:id_client:", err);
+
+    if (err.code === "23514") {
+      return res.status(400).json({ error: "Date invalide pentru profil" });
+    }
+
+    return res.status(500).json({ error: "Eroare la actualizare profil" });
+  }
+});
+
+// ======================
 // GET programări client
 // 1 rând = 1 segment din programare
 // ======================

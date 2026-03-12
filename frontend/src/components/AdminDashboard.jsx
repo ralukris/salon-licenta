@@ -33,6 +33,7 @@ import {
   updateService,
   deactivateService,
   createClient,
+  updateClient,
   createManualBooking,
 } from "../services/adminApi";
 
@@ -135,6 +136,15 @@ function AdminDashboard({ token, user, onLogout }) {
     prenume: "",
     telefon: "",
     data_nasterii: "",
+  });
+
+  const [editingClientId, setEditingClientId] = useState(null);
+  const [editingClient, setEditingClient] = useState({
+    nume: "",
+    prenume: "",
+    telefon: "",
+    data_nasterii: "",
+    email: "",
   });
 
   const [manualBooking, setManualBooking] = useState({
@@ -387,6 +397,14 @@ function AdminDashboard({ token, user, onLogout }) {
       prenume: "",
       telefon: "",
       data_nasterii: "",
+    });
+    setEditingClientId(null);
+    setEditingClient({
+      nume: "",
+      prenume: "",
+      telefon: "",
+      data_nasterii: "",
+      email: "",
     });
     setManualBooking({
       id_serviciu: "",
@@ -1117,6 +1135,77 @@ function AdminDashboard({ token, user, onLogout }) {
     }
   };
 
+  const startEditClient = (client) => {
+    clearMessages();
+    setSelectedClient(client);
+    setShowNewClientForm(false);
+    setEditingClientId(client.id_client);
+    setEditingClient({
+      nume: client.nume || "",
+      prenume: client.prenume || "",
+      telefon: client.telefon || "",
+      data_nasterii: formatDateForInput(client.data_nasterii),
+      email: client.email || "",
+    });
+  };
+
+  const cancelEditClient = () => {
+    setEditingClientId(null);
+    setEditingClient({
+      nume: "",
+      prenume: "",
+      telefon: "",
+      data_nasterii: "",
+      email: "",
+    });
+  };
+
+  const handleUpdateClient = async () => {
+    clearMessages();
+
+    if (
+      !editingClientId ||
+      !editingClient.nume.trim() ||
+      !editingClient.prenume.trim() ||
+      !editingClient.telefon.trim() ||
+      !editingClient.data_nasterii
+    ) {
+      setError("Completează toate câmpurile obligatorii ale clientului.");
+      return;
+    }
+
+    if (isFutureDate(editingClient.data_nasterii)) {
+      setError("Data nașterii nu poate fi în viitor.");
+      return;
+    }
+
+    try {
+      const data = await updateClient(token, editingClientId, {
+        nume: editingClient.nume.trim(),
+        prenume: editingClient.prenume.trim(),
+        telefon: editingClient.telefon.trim(),
+        data_nasterii: editingClient.data_nasterii,
+        email: editingClient.email.trim(),
+      });
+
+      setSelectedClient(data.client);
+      setClientResults((prev) =>
+        prev.map((client) =>
+          Number(client.id_client) === Number(editingClientId)
+            ? data.client
+            : client
+        )
+      );
+      setClientSearch(
+        `${data.client.nume || ""} ${data.client.prenume || ""} ${data.client.telefon || ""}`.trim()
+      );
+      setMessage(data.message || "Client actualizat cu succes.");
+      cancelEditClient();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const handleAddManualSegment = () => {
     clearMessages();
 
@@ -1359,54 +1448,224 @@ function AdminDashboard({ token, user, onLogout }) {
       {error && <div className="message error">{error}</div>}
 
       {activeTab === "programari" && (
-        <ProgramariTab
-          clearMessages={clearMessages}
-          showManualBookingForm={showManualBookingForm}
-          setShowManualBookingForm={setShowManualBookingForm}
-          resetManualBooking={resetManualBooking}
-          bookingSearch={bookingSearch}
-          setBookingSearch={setBookingSearch}
-          bookingStatusFilter={bookingStatusFilter}
-          setBookingStatusFilter={setBookingStatusFilter}
-          handleManualBookingSubmit={handleManualBookingSubmit}
-          clientSearch={clientSearch}
-          setClientSearch={setClientSearch}
-          selectedClient={selectedClient}
-          setSelectedClient={setSelectedClient}
-          showNewClientForm={showNewClientForm}
-          setShowNewClientForm={setShowNewClientForm}
-          newClient={newClient}
-          setNewClient={setNewClient}
-          todayForInput={todayForInput}
-          handleCreateNewClient={handleCreateNewClient}
-          creatingClient={creatingClient}
-          searchingClients={searchingClients}
-          clientResults={clientResults}
-          manualBooking={manualBooking}
-          setManualBooking={setManualBooking}
-          maxBookingDate={maxBookingDate}
-          manualBookingSegments={manualBookingSegments}
-          handleRemoveManualSegment={handleRemoveManualSegment}
-          manualBookingTotalDuration={manualBookingTotalDuration}
-          manualBookingTotalPrice={manualBookingTotalPrice}
-          loadingServices={loadingServices}
-          services={services}
-          loadingManualBookingEmployees={loadingManualBookingEmployees}
-          manualBookingEmployees={manualBookingEmployees}
-          handleAddManualSegment={handleAddManualSegment}
-          loadingManualSlots={loadingManualSlots}
-          availableManualSlots={availableManualSlots}
-          selectedManualService={selectedManualService}
-          computedManualSchedule={computedManualSchedule}
-          formatTimeHHMM={formatTimeHHMM}
-          submittingManualBooking={submittingManualBooking}
-          loadingBookings={loadingBookings}
-          filteredBookings={filteredBookings}
-          formatDateTime={formatDateTime}
-          handleFinalizeBooking={handleFinalizeBooking}
-          handleCancelBooking={handleCancelBooking}
-          handleIssueReceipt={handleIssueReceipt}
-        />
+        <>
+          <ProgramariTab
+            clearMessages={clearMessages}
+            showManualBookingForm={showManualBookingForm}
+            setShowManualBookingForm={setShowManualBookingForm}
+            resetManualBooking={resetManualBooking}
+            bookingSearch={bookingSearch}
+            setBookingSearch={setBookingSearch}
+            bookingStatusFilter={bookingStatusFilter}
+            setBookingStatusFilter={setBookingStatusFilter}
+            handleManualBookingSubmit={handleManualBookingSubmit}
+            clientSearch={clientSearch}
+            setClientSearch={setClientSearch}
+            selectedClient={selectedClient}
+            setSelectedClient={setSelectedClient}
+            showNewClientForm={showNewClientForm}
+            setShowNewClientForm={setShowNewClientForm}
+            newClient={newClient}
+            setNewClient={setNewClient}
+            todayForInput={todayForInput}
+            handleCreateNewClient={handleCreateNewClient}
+            creatingClient={creatingClient}
+            searchingClients={searchingClients}
+            clientResults={clientResults}
+            manualBooking={manualBooking}
+            setManualBooking={setManualBooking}
+            maxBookingDate={maxBookingDate}
+            manualBookingSegments={manualBookingSegments}
+            handleRemoveManualSegment={handleRemoveManualSegment}
+            manualBookingTotalDuration={manualBookingTotalDuration}
+            manualBookingTotalPrice={manualBookingTotalPrice}
+            loadingServices={loadingServices}
+            services={services}
+            loadingManualBookingEmployees={loadingManualBookingEmployees}
+            manualBookingEmployees={manualBookingEmployees}
+            handleAddManualSegment={handleAddManualSegment}
+            loadingManualSlots={loadingManualSlots}
+            availableManualSlots={availableManualSlots}
+            selectedManualService={selectedManualService}
+            computedManualSchedule={computedManualSchedule}
+            formatTimeHHMM={formatTimeHHMM}
+            submittingManualBooking={submittingManualBooking}
+            loadingBookings={loadingBookings}
+            filteredBookings={filteredBookings}
+            formatDateTime={formatDateTime}
+            handleFinalizeBooking={handleFinalizeBooking}
+            handleCancelBooking={handleCancelBooking}
+            handleIssueReceipt={handleIssueReceipt}
+          />
+
+          {selectedClient && (
+            <div className="panel" style={{ marginTop: 16 }}>
+              <h3 className="section-title">Client selectat</h3>
+              <div className="muted-text">
+                {selectedClient.nume} {selectedClient.prenume}
+              </div>
+              <div className="muted-text">
+                Telefon: {selectedClient.telefon || "-"}
+              </div>
+              <div className="muted-text">
+                Data nașterii: {formatDateOnly(selectedClient.data_nasterii)}
+              </div>
+              <div className="muted-text">
+                Email: {selectedClient.email || "-"}
+              </div>
+
+              <div className="inline-actions" style={{ marginTop: 12 }}>
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={() => startEditClient(selectedClient)}
+                >
+                  Editează clientul
+                </button>
+              </div>
+            </div>
+          )}
+
+          {clientResults.length > 0 && (
+            <div className="panel" style={{ marginTop: 16 }}>
+              <h3 className="section-title">Rezultate clienți</h3>
+
+              <div className="profiles-list">
+                {clientResults.map((client) => (
+                  <div key={client.id_client} className="profile-item">
+                    <strong>
+                      {client.nume} {client.prenume}
+                    </strong>
+
+                    <div className="muted-text">
+                      Telefon: {client.telefon || "-"}
+                    </div>
+
+                    <div className="muted-text">
+                      Data nașterii: {formatDateOnly(client.data_nasterii)}
+                    </div>
+
+                    <div className="muted-text">
+                      Email: {client.email || "-"}
+                    </div>
+
+                    <div className="inline-actions" style={{ marginTop: 12 }}>
+                      <button
+                        type="button"
+                        className="secondary-btn"
+                        onClick={() => {
+                          setSelectedClient(client);
+                          setClientSearch(
+                            `${client.nume || ""} ${client.prenume || ""} ${client.telefon || ""}`.trim()
+                          );
+                        }}
+                      >
+                        Selectează
+                      </button>
+
+                      <button
+                        type="button"
+                        className="secondary-btn"
+                        onClick={() => startEditClient(client)}
+                      >
+                        Editează clientul
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {editingClientId && (
+            <div className="panel" style={{ marginTop: 16 }}>
+              <h3 className="section-title">Editează client</h3>
+
+              <div className="form-grid">
+                <input
+                  type="text"
+                  placeholder="Nume"
+                  value={editingClient.nume}
+                  onChange={(e) =>
+                    setEditingClient((prev) => ({
+                      ...prev,
+                      nume: e.target.value,
+                    }))
+                  }
+                />
+
+                <input
+                  type="text"
+                  placeholder="Prenume"
+                  value={editingClient.prenume}
+                  onChange={(e) =>
+                    setEditingClient((prev) => ({
+                      ...prev,
+                      prenume: e.target.value,
+                    }))
+                  }
+                />
+
+                <input
+                  type="text"
+                  placeholder="Telefon"
+                  value={editingClient.telefon}
+                  onChange={(e) =>
+                    setEditingClient((prev) => ({
+                      ...prev,
+                      telefon: e.target.value,
+                    }))
+                  }
+                />
+
+                <div>
+                  <label className="field-label">Data nașterii</label>
+                  <input
+                    type="date"
+                    max={todayForInput}
+                    value={editingClient.data_nasterii}
+                    onChange={(e) =>
+                      setEditingClient((prev) => ({
+                        ...prev,
+                        data_nasterii: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
+
+                <input
+                  type="email"
+                  placeholder="Email (doar dacă are cont)"
+                  value={editingClient.email}
+                  onChange={(e) =>
+                    setEditingClient((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="inline-actions" style={{ marginTop: 14 }}>
+                <button
+                  type="button"
+                  className="primary-btn"
+                  onClick={handleUpdateClient}
+                >
+                  Salvează modificările
+                </button>
+
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={cancelEditClient}
+                >
+                  Renunță
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {activeTab === "angajati" && (

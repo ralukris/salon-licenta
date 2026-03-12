@@ -6,6 +6,7 @@ import ManagerDashboard from "./components/ManagerDashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import logo from "./assets/raluca-logo.png";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
@@ -51,6 +52,12 @@ function App() {
   const [newPrenume, setNewPrenume] = useState("");
   const [newData, setNewData] = useState("");
 
+  // edit profile
+  const [editingProfileId, setEditingProfileId] = useState(null);
+  const [editNume, setEditNume] = useState("");
+  const [editPrenume, setEditPrenume] = useState("");
+  const [editData, setEditData] = useState("");
+
   const resetClientAuthFields = () => {
     setIdentificator("");
     setParola("");
@@ -73,6 +80,25 @@ function App() {
     setNewNume("");
     setNewPrenume("");
     setNewData("");
+  };
+
+  const startEditProfile = (profile) => {
+    setEditingProfileId(profile.id_client);
+    setEditNume(profile.nume || "");
+    setEditPrenume(profile.prenume || "");
+    setEditData(
+      profile.data_nasterii
+        ? new Date(profile.data_nasterii).toISOString().split("T")[0]
+        : ""
+    );
+    setShowProfileForm(false);
+  };
+
+  const cancelEditProfile = () => {
+    setEditingProfileId(null);
+    setEditNume("");
+    setEditPrenume("");
+    setEditData("");
   };
 
   const persistSession = (data) => {
@@ -100,6 +126,7 @@ function App() {
     resetClientAuthFields();
     resetAdminFields();
     resetProfileForm();
+    cancelEditProfile();
 
     setAuthView("client-login");
   };
@@ -244,17 +271,67 @@ function App() {
     }
   };
 
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    setMessage("");
+
+    if (!editingProfileId) return;
+
+    if (!editNume || !editPrenume || !editData) {
+      setMessage("Completează toate câmpurile pentru editarea profilului.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/client/profiles/${editingProfileId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          nume: editNume,
+          prenume: editPrenume,
+          data_nasterii: editData,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 401 || res.status === 403) {
+        logout();
+        return;
+      }
+
+      if (!res.ok) {
+        setMessage(data.error || "Eroare la actualizare profil");
+        return;
+      }
+
+      setProfiles((prev) =>
+        prev.map((profile) =>
+          profile.id_client === editingProfileId ? data.profile : profile
+        )
+      );
+
+      cancelEditProfile();
+      setMessage(data.message || "Profil actualizat cu succes.");
+    } catch {
+      setMessage("Eroare de conexiune cu serverul.");
+    }
+  };
+
   const fetchClientData = async () => {
     if (!token || role !== "CLIENT") return;
 
     try {
       const [profileRes, progRes] = await Promise.all([
         fetch(`${API_URL}/client/profiles`, {
-       headers: { Authorization: `Bearer ${token}` },
-       }),
-       fetch(`${API_URL}/client/programari`, {
-       headers: { Authorization: `Bearer ${token}` },
-       }),
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`${API_URL}/client/programari`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       ]);
 
       if (
@@ -385,40 +462,40 @@ function App() {
     return "status-badge";
   };
 
-   const renderFixedLogo = () => {
-  if (!token || !role) return null;
+  const renderFixedLogo = () => {
+    if (!token || !role) return null;
 
-  const isMobile = window.innerWidth <= 768;
+    const isMobile = window.innerWidth <= 768;
 
-  return (
-    <div
-      style={{
-        position: isMobile ? "relative" : "fixed",
-        top: isMobile ? "auto" : "18px",
-        left: isMobile ? "auto" : "22px",
-        zIndex: 1000,
-        display: "flex",
-        justifyContent: isMobile ? "center" : "flex-start",
-        alignItems: "center",
-        width: isMobile ? "100%" : "auto",
-        marginBottom: isMobile ? "8px" : 0,
-        pointerEvents: "none",
-      }}
-    >
-      <img
-        src={logo}
-        alt="Raluca's Beauty Salon"
+    return (
+      <div
         style={{
-          width: isMobile ? "120px" : "150px",
-          maxWidth: isMobile ? "120px" : "150px",
-          height: "auto",
-          display: "block",
-          opacity: 0.95,
+          position: isMobile ? "relative" : "fixed",
+          top: isMobile ? "auto" : "18px",
+          left: isMobile ? "auto" : "22px",
+          zIndex: 1000,
+          display: "flex",
+          justifyContent: isMobile ? "center" : "flex-start",
+          alignItems: "center",
+          width: isMobile ? "100%" : "auto",
+          marginBottom: isMobile ? "8px" : 0,
+          pointerEvents: "none",
         }}
-      />
-    </div>
-  );
-};
+      >
+        <img
+          src={logo}
+          alt="Raluca's Beauty Salon"
+          style={{
+            width: isMobile ? "120px" : "150px",
+            maxWidth: isMobile ? "120px" : "150px",
+            height: "auto",
+            display: "block",
+            opacity: 0.95,
+          }}
+        />
+      </div>
+    );
+  };
 
   const renderAuthPage = () => (
     <div className="app-shell">
@@ -433,7 +510,10 @@ function App() {
         <div
           className="auth-container"
           style={{
-            width: authView === "client-register" ? "min(760px, 92vw)" : undefined,
+            width:
+              authView === "client-register"
+                ? "min(760px, 92vw)"
+                : undefined,
           }}
         >
           <h2>
@@ -682,20 +762,86 @@ function App() {
                   <strong>
                     {p.nume} {p.prenume}
                   </strong>
+
                   <div className="muted-text">
+                    Data nașterii:{" "}
                     {p.data_nasterii
                       ? new Date(p.data_nasterii).toLocaleDateString()
                       : "-"}
+                  </div>
+
+                  <div className="muted-text">
+                    Telefon: {p.telefon || "-"}
+                  </div>
+
+                  <div style={{ marginTop: 12 }}>
+                    <button
+                      type="button"
+                      className="secondary-btn"
+                      onClick={() => startEditProfile(p)}
+                    >
+                      Editează profilul
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
           )}
 
+          {editingProfileId && (
+            <form
+              onSubmit={handleUpdateProfile}
+              className="form-grid"
+              style={{ marginTop: 16 }}
+            >
+              <input
+                type="text"
+                placeholder="Nume"
+                value={editNume}
+                onChange={(e) => setEditNume(e.target.value)}
+                required
+              />
+
+              <input
+                type="text"
+                placeholder="Prenume"
+                value={editPrenume}
+                onChange={(e) => setEditPrenume(e.target.value)}
+                required
+              />
+
+              <label className="field-label">Data nașterii</label>
+              <input
+                type="date"
+                value={editData}
+                max={today}
+                onChange={(e) => setEditData(e.target.value)}
+                required
+              />
+
+              <div className="inline-actions">
+                <button type="submit" className="primary-btn">
+                  Salvează modificările
+                </button>
+
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  onClick={cancelEditProfile}
+                >
+                  Renunță
+                </button>
+              </div>
+            </form>
+          )}
+
           <div style={{ marginTop: 16 }}>
             <button
               className="secondary-btn"
-              onClick={() => setShowProfileForm((v) => !v)}
+              onClick={() => {
+                cancelEditProfile();
+                setShowProfileForm((v) => !v);
+              }}
             >
               {showProfileForm ? "Anulează" : "Adaugă profil"}
             </button>
