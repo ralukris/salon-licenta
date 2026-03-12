@@ -11,7 +11,17 @@ const managerRoutes = require("./routes/manager.routes");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://salon-licenta.vercel.app"
+    ],
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
+);
+
 app.use(express.json());
 
 // 🔹 Montare rute

@@ -375,7 +375,7 @@ router.post("/auth/forgot-password", async (req, res) => {
       [resetToken, resetExpire, cont.id_cont]
     );
 
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    const resetLink = `https://salon-licenta.vercel.app/reset-password/${resetToken}`;
 
     console.log("======================================");
     console.log("LINK RESETARE PAROLA:");
