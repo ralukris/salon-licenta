@@ -6,6 +6,7 @@ import IndisponibilitatiTab from "./admin/IndisponibilitatiTab";
 import StocuriTab from "./admin/StocuriTab";
 import ServiciiTab from "./admin/ServiciiTab";
 import PlatiTab from "./admin/PlatiTab";
+import ClientiTab from "./admin/ClientiTab";
 import {
   getEmployees,
   getBookings,
@@ -1451,51 +1452,51 @@ function AdminDashboard({ token, user, onLogout }) {
         <>
           <ProgramariTab
             clearMessages={clearMessages}
-            showManualBookingForm={showManualBookingForm}
-            setShowManualBookingForm={setShowManualBookingForm}
-            resetManualBooking={resetManualBooking}
-            bookingSearch={bookingSearch}
-            setBookingSearch={setBookingSearch}
-            bookingStatusFilter={bookingStatusFilter}
-            setBookingStatusFilter={setBookingStatusFilter}
-            handleManualBookingSubmit={handleManualBookingSubmit}
-            clientSearch={clientSearch}
-            setClientSearch={setClientSearch}
-            selectedClient={selectedClient}
-            setSelectedClient={setSelectedClient}
-            showNewClientForm={showNewClientForm}
-            setShowNewClientForm={setShowNewClientForm}
-            newClient={newClient}
-            setNewClient={setNewClient}
-            todayForInput={todayForInput}
-            handleCreateNewClient={handleCreateNewClient}
-            creatingClient={creatingClient}
-            searchingClients={searchingClients}
-            clientResults={clientResults}
-            manualBooking={manualBooking}
-            setManualBooking={setManualBooking}
-            maxBookingDate={maxBookingDate}
-            manualBookingSegments={manualBookingSegments}
-            handleRemoveManualSegment={handleRemoveManualSegment}
-            manualBookingTotalDuration={manualBookingTotalDuration}
-            manualBookingTotalPrice={manualBookingTotalPrice}
-            loadingServices={loadingServices}
-            services={services}
-            loadingManualBookingEmployees={loadingManualBookingEmployees}
-            manualBookingEmployees={manualBookingEmployees}
-            handleAddManualSegment={handleAddManualSegment}
-            loadingManualSlots={loadingManualSlots}
-            availableManualSlots={availableManualSlots}
-            selectedManualService={selectedManualService}
-            computedManualSchedule={computedManualSchedule}
-            formatTimeHHMM={formatTimeHHMM}
-            submittingManualBooking={submittingManualBooking}
-            loadingBookings={loadingBookings}
-            filteredBookings={filteredBookings}
-            formatDateTime={formatDateTime}
-            handleFinalizeBooking={handleFinalizeBooking}
-            handleCancelBooking={handleCancelBooking}
-            handleIssueReceipt={handleIssueReceipt}
+    showManualBookingForm={showManualBookingForm}
+    setShowManualBookingForm={setShowManualBookingForm}
+    resetManualBooking={resetManualBooking}
+    bookingSearch={bookingSearch}
+    setBookingSearch={setBookingSearch}
+    bookingStatusFilter={bookingStatusFilter}
+    setBookingStatusFilter={setBookingStatusFilter}
+    handleManualBookingSubmit={handleManualBookingSubmit}
+    clientSearch={clientSearch}
+    setClientSearch={setClientSearch}
+    selectedClient={selectedClient}
+    setSelectedClient={setSelectedClient}
+    showNewClientForm={showNewClientForm}
+    setShowNewClientForm={setShowNewClientForm}
+    newClient={newClient}
+    setNewClient={setNewClient}
+    todayForInput={todayForInput}
+    handleCreateNewClient={handleCreateNewClient}
+    creatingClient={creatingClient}
+    searchingClients={searchingClients}
+    clientResults={clientResults}
+    manualBooking={manualBooking}
+    setManualBooking={setManualBooking}
+    maxBookingDate={maxBookingDate}
+    manualBookingSegments={manualBookingSegments}
+    handleRemoveManualSegment={handleRemoveManualSegment}
+    manualBookingTotalDuration={manualBookingTotalDuration}
+    manualBookingTotalPrice={manualBookingTotalPrice}
+    loadingServices={loadingServices}
+    services={services}
+    loadingManualBookingEmployees={loadingManualBookingEmployees}
+    manualBookingEmployees={manualBookingEmployees}
+    handleAddManualSegment={handleAddManualSegment}
+    loadingManualSlots={loadingManualSlots}
+    availableManualSlots={availableManualSlots}
+    selectedManualService={selectedManualService}
+    computedManualSchedule={computedManualSchedule}
+    formatTimeHHMM={formatTimeHHMM}
+    submittingManualBooking={submittingManualBooking}
+    loadingBookings={loadingBookings}
+    filteredBookings={filteredBookings}
+    formatDateTime={formatDateTime}
+    handleFinalizeBooking={handleFinalizeBooking}
+    handleCancelBooking={handleCancelBooking}
+    handleIssueReceipt={handleIssueReceipt}
           />
 
           {selectedClient && (
@@ -1770,6 +1771,31 @@ function AdminDashboard({ token, user, onLogout }) {
           filteredReceiptsHistory={filteredReceiptsHistory}
         />
       )}
+
+      {activeTab === "clienti" && (
+  <ClientiTab
+    clientSearch={clientSearch}
+    setClientSearch={setClientSearch}
+    searchingClients={searchingClients}
+    clientResults={clientResults}
+    selectedClient={selectedClient}
+    setSelectedClient={setSelectedClient}
+    showNewClientForm={showNewClientForm}
+    setShowNewClientForm={setShowNewClientForm}
+    newClient={newClient}
+    setNewClient={setNewClient}
+    todayForInput={todayForInput}
+    handleCreateNewClient={handleCreateNewClient}
+    creatingClient={creatingClient}
+    editingClientId={editingClientId}
+    editingClient={editingClient}
+    setEditingClient={setEditingClient}
+    startEditClient={startEditClient}
+    cancelEditClient={cancelEditClient}
+    handleUpdateClient={handleUpdateClient}
+    formatDateOnly={formatDateOnly}
+  />
+)}
     </div>
   );
 }

@@ -2,6 +2,7 @@ function AdminTabs({ activeTab, setActiveTab }) {
   return (
     <div className="admin-tabs">
       <button
+        type="button"
         className={activeTab === "programari" ? "primary-btn" : "secondary-btn"}
         onClick={() => setActiveTab("programari")}
       >
@@ -9,6 +10,15 @@ function AdminTabs({ activeTab, setActiveTab }) {
       </button>
 
       <button
+        type="button"
+        className={activeTab === "clienti" ? "primary-btn" : "secondary-btn"}
+        onClick={() => setActiveTab("clienti")}
+      >
+        Clienți
+      </button>
+
+      <button
+        type="button"
         className={activeTab === "angajati" ? "primary-btn" : "secondary-btn"}
         onClick={() => setActiveTab("angajati")}
       >
@@ -16,6 +26,7 @@ function AdminTabs({ activeTab, setActiveTab }) {
       </button>
 
       <button
+        type="button"
         className={
           activeTab === "indisponibilitati" ? "primary-btn" : "secondary-btn"
         }
@@ -25,6 +36,7 @@ function AdminTabs({ activeTab, setActiveTab }) {
       </button>
 
       <button
+        type="button"
         className={activeTab === "stocuri" ? "primary-btn" : "secondary-btn"}
         onClick={() => setActiveTab("stocuri")}
       >
@@ -32,6 +44,7 @@ function AdminTabs({ activeTab, setActiveTab }) {
       </button>
 
       <button
+        type="button"
         className={activeTab === "servicii" ? "primary-btn" : "secondary-btn"}
         onClick={() => setActiveTab("servicii")}
       >
@@ -39,6 +52,7 @@ function AdminTabs({ activeTab, setActiveTab }) {
       </button>
 
       <button
+        type="button"
         className={activeTab === "plati" ? "primary-btn" : "secondary-btn"}
         onClick={() => setActiveTab("plati")}
       >
