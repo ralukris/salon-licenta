@@ -64,6 +64,20 @@ export async function getServices(token) {
   return Array.isArray(data) ? data : [];
 }
 
+export async function getClients(token) {
+  const res = await fetch(`${API_BASE}/admin/clienti`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = await parseJsonSafe(res);
+
+  if (!res.ok) {
+    throw new Error(getErrorMessage(data, "Eroare la încărcarea clienților."));
+  }
+
+  return Array.isArray(data) ? data : [];
+}
+
 export async function getUnavailability(token, employeeId) {
   const res = await fetch(
     `${API_BASE}/admin/angajati/${employeeId}/indisponibilitati`,
@@ -161,7 +175,9 @@ export async function getMultipleAvailableSlots(token, payload) {
   const data = await parseJsonSafe(res);
 
   if (!res.ok) {
-    throw new Error("Eroare la încărcarea sloturilor disponibile.");
+    throw new Error(
+      getErrorMessage(data, "Eroare la încărcarea sloturilor disponibile.")
+    );
   }
 
   return Array.isArray(data) ? data : [];

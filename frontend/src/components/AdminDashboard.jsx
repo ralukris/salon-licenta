@@ -12,6 +12,7 @@ import {
   getBookings,
   getStocks,
   getServices,
+  getClients,
   getUnavailability,
   getAvailableReceipts,
   getReceiptsHistory,
@@ -47,11 +48,13 @@ function AdminDashboard({ token, user, onLogout }) {
   const [bookings, setBookings] = useState([]);
   const [stocks, setStocks] = useState([]);
   const [services, setServices] = useState([]);
+  const [clients, setClients] = useState([]);
 
   const [loadingEmployees, setLoadingEmployees] = useState(false);
   const [loadingBookings, setLoadingBookings] = useState(false);
   const [loadingStocks, setLoadingStocks] = useState(false);
   const [loadingServices, setLoadingServices] = useState(false);
+  const [loadingClients, setLoadingClients] = useState(false);
 
   const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
   const [unavailabilityList, setUnavailabilityList] = useState([]);
@@ -126,16 +129,14 @@ function AdminDashboard({ token, user, onLogout }) {
 
   const [showManualBookingForm, setShowManualBookingForm] = useState(false);
 
-  // Programari - client search
+  // Search separat pentru programări manuale
   const [manualClientSearch, setManualClientSearch] = useState("");
   const [manualClientResults, setManualClientResults] = useState([]);
   const [searchingManualClients, setSearchingManualClients] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
 
-  // Tab clienti - search separat
+  // Search local pentru tab-ul Clienți
   const [clientsTabSearch, setClientsTabSearch] = useState("");
-  const [clientsTabResults, setClientsTabResults] = useState([]);
-  const [searchingClientsTab, setSearchingClientsTab] = useState(false);
 
   const [showNewClientForm, setShowNewClientForm] = useState(false);
   const [creatingClient, setCreatingClient] = useState(false);
@@ -394,6 +395,27 @@ function AdminDashboard({ token, user, onLogout }) {
     });
   }, [services, serviceSearch]);
 
+  const filteredClients = useMemo(() => {
+    const search = clientsTabSearch.trim().toLowerCase();
+
+    if (!search) return clients;
+
+    return clients.filter((client) => {
+      const searchableText = `
+        ${client.id_client || ""}
+        ${client.nume || ""}
+        ${client.prenume || ""}
+        ${client.telefon || ""}
+        ${client.email || ""}
+        ${client.data_nasterii || ""}
+      `
+        .toLowerCase()
+        .trim();
+
+      return searchableText.includes(search);
+    });
+  }, [clients, clientsTabSearch]);
+
   const resetManualBooking = () => {
     setManualClientSearch("");
     setManualClientResults([]);
@@ -470,6 +492,19 @@ function AdminDashboard({ token, user, onLogout }) {
     }
   };
 
+  const fetchClients = async () => {
+    setLoadingClients(true);
+    try {
+      const data = await getClients(token);
+      setClients(data);
+    } catch (err) {
+      setError(err.message);
+      setClients([]);
+    } finally {
+      setLoadingClients(false);
+    }
+  };
+
   const fetchUnavailability = async (employeeId) => {
     if (!employeeId) {
       setUnavailabilityList([]);
@@ -523,6 +558,7 @@ function AdminDashboard({ token, user, onLogout }) {
     fetchBookings();
     fetchStocks();
     fetchServices();
+    fetchClients();
     fetchAvailableReceipts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
@@ -543,6 +579,11 @@ function AdminDashboard({ token, user, onLogout }) {
 
     if (activeTab !== "servicii") {
       setServiceSearch("");
+    }
+
+    if (activeTab !== "clienti") {
+      cancelEditClient();
+      setClientsTabSearch("");
     }
   }, [activeTab]);
 
@@ -592,44 +633,6 @@ function AdminDashboard({ token, user, onLogout }) {
       controller.abort();
     };
   }, [manualClientSearch, token]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const searchClientsTab = async () => {
-      const term = clientsTabSearch.trim();
-
-      if (term.length < 2) {
-        setClientsTabResults([]);
-        setSearchingClientsTab(false);
-        return;
-      }
-
-      setSearchingClientsTab(true);
-
-      try {
-        const data = await searchClientsApi(token, term, controller.signal);
-        setError("");
-        setClientsTabResults(data);
-      } catch (err) {
-        if (!controller.signal.aborted) {
-          setClientsTabResults([]);
-          setError(err.message);
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setSearchingClientsTab(false);
-        }
-      }
-    };
-
-    const timer = setTimeout(searchClientsTab, 300);
-
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [clientsTabSearch, token]);
 
   useEffect(() => {
     const fetchManualBookingEmployees = async () => {
@@ -1144,11 +1147,18 @@ function AdminDashboard({ token, user, onLogout }) {
         data_nasterii: newClient.data_nasterii || null,
       });
 
-      setSelectedClient(data.client);
-      setManualClientSearch(
-        `${data.client.nume || ""} ${data.client.prenume || ""} ${data.client.telefon || ""}`.trim()
-      );
-      setManualClientResults([data.client]);
+      await fetchClients();
+
+      if (activeTab === "programari") {
+        setSelectedClient(data.client);
+        setManualClientSearch(
+          `${data.client.nume || ""} ${data.client.prenume || ""} ${data.client.telefon || ""}`.trim()
+        );
+        setManualClientResults([data.client]);
+        setMessage(data.message || "Client nou adăugat și selectat.");
+      } else {
+        setMessage(data.message || "Client nou adăugat.");
+      }
 
       setNewClient({
         nume: "",
@@ -1158,9 +1168,8 @@ function AdminDashboard({ token, user, onLogout }) {
       });
 
       setShowNewClientForm(false);
-      setMessage(data.message || "Client nou adăugat și selectat.");
     } catch (err) {
-      if (err.data?.client) {
+      if (err.data?.client && activeTab === "programari") {
         setSelectedClient(err.data.client);
         setManualClientSearch(
           `${err.data.client.nume || ""} ${err.data.client.prenume || ""} ${err.data.client.telefon || ""}`.trim()
@@ -1224,13 +1233,14 @@ function AdminDashboard({ token, user, onLogout }) {
         email: editingClient.email.trim(),
       });
 
-      setClientsTabResults((prev) =>
+      setClients((prev) =>
         prev.map((client) =>
           Number(client.id_client) === Number(editingClientId)
             ? data.client
             : client
         )
       );
+
       setMessage(data.message || "Client actualizat cu succes.");
       cancelEditClient();
     } catch (err) {
@@ -1534,8 +1544,8 @@ function AdminDashboard({ token, user, onLogout }) {
         <ClientiTab
           clientSearch={clientsTabSearch}
           setClientSearch={setClientsTabSearch}
-          searchingClients={searchingClientsTab}
-          clientResults={clientsTabResults}
+          loadingClients={loadingClients}
+          clientResults={filteredClients}
           showNewClientForm={showNewClientForm}
           setShowNewClientForm={setShowNewClientForm}
           newClient={newClient}

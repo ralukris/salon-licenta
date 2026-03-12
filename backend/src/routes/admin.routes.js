@@ -624,6 +624,32 @@ router.get("/admin/clienti/search", async (req, res) => {
   }
 });
 
+ // 5.0) Lista tuturor clientilor
+router.get("/admin/clienti", async (req, res) => {
+  try {
+    const result = await db.query(
+      `
+      SELECT
+        c.id_client,
+        c.id_cont,
+        c.nume,
+        c.prenume,
+        c.telefon,
+        c.data_nasterii,
+        ct.email
+      FROM clienti c
+      LEFT JOIN conturi ct ON ct.id_cont = c.id_cont
+      ORDER BY c.nume ASC, c.prenume ASC, c.id_client ASC
+      `
+    );
+
+    return res.json(result.rows);
+  } catch (err) {
+    console.error("Eroare GET /admin/clienti:", err);
+    return res.status(500).json({ error: "Eroare la preluarea clientilor" });
+  }
+});
+
 // 5.1) Adaugă client nou fără cont online
 router.post("/admin/clienti", async (req, res) => {
   const { nume, prenume, telefon, data_nasterii } = req.body;

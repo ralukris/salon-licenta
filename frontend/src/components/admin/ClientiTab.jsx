@@ -1,7 +1,7 @@
 function ClientiTab({
   clientSearch,
   setClientSearch,
-  searchingClients,
+  loadingClients,
   clientResults,
   showNewClientForm,
   setShowNewClientForm,
@@ -102,17 +102,13 @@ function ClientiTab({
         </div>
       )}
 
-      {searchingClients && (
-        <p className="muted-text">Se caută clienții...</p>
+      {loadingClients && <p className="muted-text">Se încarcă clienții...</p>}
+
+      {!loadingClients && clientResults.length === 0 && (
+        <p className="muted-text">Nu există clienți.</p>
       )}
 
-      {!searchingClients &&
-        clientSearch.trim().length >= 2 &&
-        clientResults.length === 0 && (
-          <p className="muted-text">Nu s-au găsit clienți.</p>
-        )}
-
-      {clientResults.length > 0 && (
+      {!loadingClients && clientResults.length > 0 && (
         <div className="profiles-list">
           {clientResults.map((client) => (
             <div key={client.id_client} className="profile-item">
@@ -189,7 +185,10 @@ function ClientiTab({
               placeholder="Email (dacă există cont)"
               value={editingClient.email}
               onChange={(e) =>
-                setEditingClient((prev) => ({ ...prev, email: e.target.value }))
+                setEditingClient((prev) => ({
+                  ...prev,
+                  email: e.target.value,
+                }))
               }
             />
 
