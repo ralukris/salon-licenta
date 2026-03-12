@@ -6,6 +6,7 @@ import ManagerDashboard from "./components/ManagerDashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import logo from "./assets/raluca-logo.png";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [authView, setAuthView] = useState("client-login");
@@ -113,7 +114,7 @@ function App() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/auth/client/login", {
+      const res = await fetch(`${API_URL}/auth/client/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identificator, parola }),
@@ -143,7 +144,7 @@ function App() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/auth/admin/login", {
+      const res = await fetch(`${API_URL}/auth/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: adminEmail, parola: adminParola }),
@@ -173,7 +174,7 @@ function App() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/auth/client/register", {
+      const res = await fetch(`${API_URL}/auth/client/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -210,7 +211,7 @@ function App() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/client/profiles", {
+      const res = await fetch(`${API_URL}/client/profiles`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -248,12 +249,12 @@ function App() {
 
     try {
       const [profileRes, progRes] = await Promise.all([
-        fetch("http://localhost:3000/client/profiles", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch("http://localhost:3000/client/programari", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        fetch(`${API_URL}/client/profiles`, {
+       headers: { Authorization: `Bearer ${token}` },
+       }),
+       fetch(`${API_URL}/client/programari`, {
+       headers: { Authorization: `Bearer ${token}` },
+       }),
       ]);
 
       if (
@@ -290,7 +291,7 @@ function App() {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/client/programari/${idProgramare}/anulare`,
+        `${API_URL}/client/programari/${idProgramare}/anulare`,
         {
           method: "PATCH",
           headers: {

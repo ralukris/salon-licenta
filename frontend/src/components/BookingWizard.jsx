@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function BookingWizard({ token, profiles, onBookingCreated }) {
   const [step, setStep] = useState(1);
@@ -66,13 +67,13 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
 
       try {
         if (step === 2) {
-          const res = await fetch("http://localhost:3000/public/locatii");
+          const res = await fetch(`${API_URL}/public/locatii`);
           const data = await res.json().catch(() => []);
           setLocatii(Array.isArray(data) ? data : []);
         }
 
         if (step >= 4) {
-          const res = await fetch("http://localhost:3000/public/servicii");
+          const res = await fetch(`${API_URL}/public/servicii`);
           const data = await res.json().catch(() => []);
           setServicii(Array.isArray(data) ? data : []);
         }
@@ -104,8 +105,8 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
 
       try {
         const url =
-          `http://localhost:3000/public/sloturi-disponibile-generale` +
-          `?id_locatie=${selectedLocatie}&id_serviciu=${selectedServiciu}&data=${selectedDate}`;
+         `${API_URL}/public/sloturi-disponibile-generale` +
+         `?id_locatie=${selectedLocatie}&id_serviciu=${selectedServiciu}&data=${selectedDate}`;
 
         const res = await fetch(url);
         const data = await res.json().catch(() => []);
@@ -159,7 +160,7 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
 
       try {
         const res = await fetch(
-          "http://localhost:3000/public/sloturi-disponibile-multiple",
+         `${API_URL}/public/sloturi-disponibile-multiple`,
           {
             method: "POST",
             headers: {
@@ -463,7 +464,7 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
         };
       });
 
-      const response = await fetch("http://localhost:3000/client/programari", {
+      const response = await fetch(`${API_URL}/client/programari`,  {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
