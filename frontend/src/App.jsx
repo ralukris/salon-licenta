@@ -389,11 +389,11 @@ function App() {
   if (!token || !role) return null;
 
   return (
-    <div className="logged-logo-wrapper">
+    <div className="app-logged-logo-wrapper">
       <img
         src={logo}
         alt="Raluca's Beauty Salon"
-        className="logged-logo"
+        className="app-logged-logo"
       />
     </div>
   );

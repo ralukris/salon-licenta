@@ -455,8 +455,8 @@ input[type="password"]::-webkit-password-toggle-button {
 }
 
 .app-logo {
-  width: 78px;
-  max-width: 78px;
+  width: 48px;
+  max-width: 48px;
   height: auto;
   opacity: 0.95;
   display: block;
@@ -504,13 +504,13 @@ input[type="password"]::-webkit-password-toggle-button {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 0 8px 0;
+    margin: -6 0 6px 0;
     pointer-events: none;
   }
 
   .app-logo {
-    width: 56px;
-    max-width: 56px;
+    width: 28px;
+    max-width: 28px;
     height: auto;
     display: block;
   }
