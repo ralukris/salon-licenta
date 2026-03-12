@@ -15,21 +15,14 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://salon-licenta.vercel.app"
+      "https://salon-licenta.vercel.app",
     ],
     methods: ["GET", "POST", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
 app.use(express.json());
-
-// 🔹 Montare rute
-app.use(publicRoutes);
-app.use(authRoutes);
-app.use(clientRoutes);
-app.use(adminRoutes);
-app.use(managerRoutes);
 
 // 🔹 Test API
 app.get("/", (req, res) => {
@@ -46,6 +39,13 @@ app.get("/health", async (req, res) => {
     res.status(500).json({ status: "ERROR", db: "not connected" });
   }
 });
+
+// 🔹 Montare rute
+app.use(publicRoutes);
+app.use(authRoutes);
+app.use(clientRoutes);
+app.use(adminRoutes);
+app.use(managerRoutes);
 
 const PORT = process.env.PORT || 3000;
 
