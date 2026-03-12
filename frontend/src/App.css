@@ -445,6 +445,23 @@ input[type="password"]::-webkit-password-toggle-button {
   flex-wrap: wrap;
 }
 
+/* Logo after login */
+.app-logo-wrapper {
+  position: fixed;
+  top: 18px;
+  left: 22px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.app-logo {
+  width: 78px;
+  max-width: 78px;
+  height: auto;
+  opacity: 0.95;
+  display: block;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .app-shell {
@@ -480,5 +497,21 @@ input[type="password"]::-webkit-password-toggle-button {
   .primary-btn,
   .secondary-btn {
     width: 100%;
+  }
+
+  .app-logo-wrapper {
+    position: static;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0 8px 0;
+    pointer-events: none;
+  }
+
+  .app-logo {
+    width: 56px;
+    max-width: 56px;
+    height: auto;
+    display: block;
   }
 }
