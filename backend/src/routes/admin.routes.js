@@ -392,6 +392,43 @@ router.patch("/admin/angajati/:id_angajat/inactiv", async (req, res) => {
   }
 });
 
+// 4.1) Reactivează angajat
+router.patch("/admin/angajati/:id_angajat/activ", async (req, res) => {
+  const id_angajat = Number(req.params.id_angajat);
+  const id_locatie = req.user.id_locatie;
+
+  if (!Number.isInteger(id_angajat)) {
+    return res.status(400).json({ error: "id_angajat invalid" });
+  }
+
+  try {
+    const result = await db.query(
+      `
+      UPDATE angajati
+      SET activ = true
+      WHERE id_angajat = $1
+        AND id_locatie = $2
+      RETURNING
+        id_angajat, id_locatie, nume, prenume, telefon,
+        email, specializare, salariu, activ, data_start_program, data_nastere
+      `,
+      [id_angajat, id_locatie]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Angajat inexistent sau fara acces" });
+    }
+
+    return res.json({
+      message: "Angajat reactivat",
+      angajat: result.rows[0],
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Eroare la reactivarea angajatului" });
+  }
+});
+
 // GET servicii angajat
 router.get("/admin/angajati/:id_angajat/servicii", async (req, res) => {
   const id_angajat = Number(req.params.id_angajat);
