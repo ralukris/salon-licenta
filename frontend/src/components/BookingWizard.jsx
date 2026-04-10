@@ -532,7 +532,7 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
               padding: "6px 14px",
               borderRadius: 20,
               fontSize: 13,
-              backgroundColor: step === index + 1 ? "#4f46e5" : "#e5e7eb",
+              backgroundColor: step === index + 1 ? "#c9a96e" : "#e5e7eb",
               color: step === index + 1 ? "white" : "#374151",
             }}
           >
@@ -637,7 +637,7 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
             marginBottom: 20,
             background: "none",
             border: "none",
-            color: "#4f46e5",
+            color: "#c9a96e",
             fontWeight: 600,
             cursor: "pointer",
           }}
@@ -768,7 +768,7 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
                     selectedServiciu === s.id_serviciu ? "#ede9fe" : "#f9fafb",
                   border:
                     selectedServiciu === s.id_serviciu
-                      ? "1px solid #4f46e5"
+                      ? "1px solid #c9a96e"
                       : "1px solid #e5e7eb",
                 }}
               >
@@ -828,7 +828,7 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
                               selectedAngajat === emp.id_angajat ? "#ede9fe" : "#ffffff",
                             border:
                               selectedAngajat === emp.id_angajat
-                                ? "1px solid #4f46e5"
+                                ? "1px solid #c9a96e"
                                 : "1px solid #e5e7eb",
                           }}
                         >
@@ -948,7 +948,7 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
                   borderRadius: 10,
                   border: "1px solid #e5e7eb",
                   cursor: "pointer",
-                  backgroundColor: selectedTime === slot ? "#4f46e5" : "#f9fafb",
+                  backgroundColor: selectedTime === slot ? "#c9a96e" : "#f9fafb",
                   color: selectedTime === slot ? "white" : "#111827",
                   fontWeight: 600,
                 }}
@@ -1033,7 +1033,7 @@ const buttonStyle = {
 
 const confirmButton = {
   padding: "10px 18px",
-  backgroundColor: "#4f46e5",
+  backgroundColor: "#c9a96e",
   color: "white",
   border: "none",
   borderRadius: 8,

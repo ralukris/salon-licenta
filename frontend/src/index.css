@@ -97,8 +97,8 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: rgba(99, 102, 241, 0.55);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  border-color: rgba(201, 169, 110, 0.55);
+  box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.12);
 }
 
 h1,
@@ -456,8 +456,8 @@ p {
 }
 
 .status-confirmata {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #fdf3e3;
+  color: #b8935a;
 }
 
 .status-finalizata {
