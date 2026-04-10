@@ -17,7 +17,6 @@ function AngajatiTab({
   startEditEmployee,
   handleSetEmployeeInactive,
   formatDateOnly,
-  formatDateOnly,
   angajatServiciiId,
   angajatServiciiSelected,
   loadingAngajatServicii,
