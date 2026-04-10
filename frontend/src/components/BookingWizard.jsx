@@ -43,7 +43,7 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
 
   const maxDate = useMemo(() => {
     const now = new Date();
-    const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+    const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 3, 0);
     const yyyy = endOfNextMonth.getFullYear();
     const mm = String(endOfNextMonth.getMonth() + 1).padStart(2, "0");
     const dd = String(endOfNextMonth.getDate()).padStart(2, "0");
