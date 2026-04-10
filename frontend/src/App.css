@@ -114,13 +114,13 @@ textarea:focus {
 }
 
 .primary-btn {
-  background: #4f46e5;
+  background: #c9a96e;
   color: #ffffff;
   font-weight: 600;
 }
 
 .primary-btn:hover:not(:disabled) {
-  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.22);
+  box-shadow: 0 10px 24px rgba(201, 169, 110, 0.35);
 }
 
 .secondary-btn {
