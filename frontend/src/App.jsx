@@ -703,9 +703,9 @@ function App() {
   );
 
   const renderClientDashboard = () => (
-    <div className="app-shell">
+    <div className="app-shell" style={{ paddingTop: 0 }}>
     <div className="dashboard-container">
-      <div style={{ textAlign: "center", marginBottom: "8px" }}>
+      <div style={{ textAlign: "center", marginBottom: "8px", paddingTop: "16px" }}>
         <img
           src={logo}
           alt="Raluca's Beauty Salon"
