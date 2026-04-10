@@ -1532,6 +1532,45 @@ router.patch("/admin/produse/:id_produs/dezactiveaza", async (req, res) => {
   }
 });
 
+// 11.1) Reactivare produs
+router.patch("/admin/produse/:id_produs/activeaza", async (req, res) => {
+  const id_produs = Number(req.params.id_produs);
+  const id_locatie = req.user.id_locatie;
+
+  if (!Number.isInteger(id_produs)) {
+    return res.status(400).json({ error: "id_produs invalid" });
+  }
+
+  try {
+    const checkRes = await db.query(
+      `SELECT 1 FROM stocuri WHERE id_produs = $1 AND id_locatie = $2 LIMIT 1`,
+      [id_produs, id_locatie]
+    );
+
+    if (checkRes.rows.length === 0) {
+      return res.status(404).json({ error: "Produs inexistent in locatia ta" });
+    }
+
+    const result = await db.query(
+      `
+      UPDATE produse
+      SET activ = true
+      WHERE id_produs = $1
+      RETURNING id_produs, denumire_produs, unitate_masura, activ
+      `,
+      [id_produs]
+    );
+
+    return res.json({
+      message: "Produs reactivat",
+      produs: result.rows[0],
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Eroare la reactivarea produsului" });
+  }
+});
+
 // 12) Listează indisponibilitățile unui angajat din salonul adminului
 router.get("/admin/angajati/:id_angajat/indisponibilitati", async (req, res) => {
   const id_angajat = Number(req.params.id_angajat);
