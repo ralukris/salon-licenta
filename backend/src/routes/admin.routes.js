@@ -646,6 +646,39 @@ router.patch("/admin/servicii/:id_serviciu/dezactiveaza", async (req, res) => {
   }
 });
 
+// 4.5) Reactivează serviciu
+router.patch("/admin/servicii/:id_serviciu/activeaza", async (req, res) => {
+  const id_serviciu = Number(req.params.id_serviciu);
+
+  if (!Number.isInteger(id_serviciu)) {
+    return res.status(400).json({ error: "id_serviciu invalid" });
+  }
+
+  try {
+    const result = await db.query(
+      `
+      UPDATE servicii
+      SET activ = true
+      WHERE id_serviciu = $1
+      RETURNING id_serviciu, denumire_serviciu, pret, durata_minute, activ
+      `,
+      [id_serviciu]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Serviciu inexistent" });
+    }
+
+    return res.json({
+      message: "Serviciu reactivat",
+      serviciu: result.rows[0],
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Eroare la reactivarea serviciului" });
+  }
+});
+
 // 5) Căutare client după nume / prenume / telefon / email
 router.get("/admin/clienti/search", async (req, res) => {
   const q = String(req.query.q || "").trim();
