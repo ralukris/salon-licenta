@@ -765,7 +765,7 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
                 style={{
                   ...buttonStyle,
                   backgroundColor:
-                    selectedServiciu === s.id_serviciu ? "#ede9fe" : "#f9fafb",
+                    selectedServiciu === s.id_serviciu ? "#fdf3e3" : "#f9fafb",
                   border:
                     selectedServiciu === s.id_serviciu
                       ? "1px solid #c9a96e"
@@ -825,7 +825,7 @@ function BookingWizard({ token, profiles, onBookingCreated }) {
                             ...buttonStyle,
                             marginBottom: 0,
                             backgroundColor:
-                              selectedAngajat === emp.id_angajat ? "#ede9fe" : "#ffffff",
+                              selectedAngajat === emp.id_angajat ? "#fdf3e3" : "#ffffff",
                             border:
                               selectedAngajat === emp.id_angajat
                                 ? "1px solid #c9a96e"
