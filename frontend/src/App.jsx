@@ -471,7 +471,7 @@ const renderFixedLogo = () => {
         width: "100%",
         display: "flex",
         justifyContent: "center",
-        padding: "18px 0",
+        padding: "12px 0 0 0",
       }}
     >
       <img
