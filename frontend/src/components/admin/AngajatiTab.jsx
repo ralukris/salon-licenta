@@ -25,6 +25,7 @@ function AngajatiTab({
   handleCloseServiciiAngajat,
   handleToggleServiciu,
   handleSaveServiciiAngajat,
+  handleActivateEmployee,
 }) {
   return (
     <div className="panel">
@@ -336,13 +337,21 @@ function AngajatiTab({
                           Editează
                         </button>
 
-                        <button
-                          className="danger-btn"
-                          onClick={() => handleSetEmployeeInactive(emp.id_angajat)}
-                          disabled={!emp.activ}
-                        >
-                          Setează inactiv
-                        </button>
+                         {emp.activ ? (
+                          <button
+                           className="danger-btn"
+                            onClick={() => handleSetEmployeeInactive(emp.id_angajat)}
+                          >
+                           Setează inactiv
+                          </button>
+                          ) : (
+                          <button
+                         className="primary-btn"
+                          onClick={() => handleActivateEmployee(emp.id_angajat)}
+                         >
+                          Reactivează
+                         </button>
+                        )}
                         <button
                           className="secondary-btn"
                           onClick={() => handleOpenServiciiAngajat(emp)}

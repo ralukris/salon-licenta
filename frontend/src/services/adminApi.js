@@ -609,3 +609,20 @@ export async function activateProduct(token, idProdus) {
 
   return data;
 }
+
+export async function activateEmployee(token, idAngajat) {
+  const res = await fetch(`${API_BASE}/admin/angajati/${idAngajat}/activ`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await parseJsonSafe(res);
+
+  if (!res.ok) {
+    throw new Error(getErrorMessage(data, "Eroare la reactivarea angajatului."));
+  }
+
+  return data;
+}

@@ -33,6 +33,7 @@ import {
   addEmployee,
   updateEmployee,
   setEmployeeInactive,
+  activateEmployee,
   addService,
   updateService,
   deactivateService,
@@ -1068,6 +1069,21 @@ function AdminDashboard({ token, user, onLogout }) {
     }
   };
 
+  const handleActivateEmployee = async (id_angajat) => {
+  clearMessages();
+
+  const ok = window.confirm("Sigur vrei să reactivezi acest angajat?");
+  if (!ok) return;
+
+  try {
+    const data = await activateEmployee(token, id_angajat);
+    setMessage(data.message || "Angajat reactivat.");
+    await fetchEmployees();
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
   const handleAddService = async (e) => {
     e.preventDefault();
     clearMessages();
@@ -1675,6 +1691,7 @@ const handleSaveServiciiAngajat = async () => {
           handleCloseServiciiAngajat={handleCloseServiciiAngajat}
           handleToggleServiciu={handleToggleServiciu}
           handleSaveServiciiAngajat={handleSaveServiciiAngajat}
+          handleActivateEmployee={handleActivateEmployee}
         />
       )}
 
