@@ -3,6 +3,15 @@ const db = require("../config/db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 
 const router = express.Router();
 
@@ -373,14 +382,34 @@ router.post("/auth/forgot-password", async (req, res) => {
 
     const resetLink = `https://salon-licenta.vercel.app/reset-password/${resetToken}`;
 
-    console.log("======================================");
-    console.log("LINK RESETARE PAROLA:");
-    console.log(resetLink);
-    console.log("======================================");
+   try {
+  await transporter.sendMail({
+    from: `"Raluca's Beauty Salon" <${process.env.GMAIL_USER}>`,
+    to: cont.email,
+    subject: "Resetare parolă - Raluca's Beauty Salon",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #c9a96e;">Resetare parolă</h2>
+        <p>Ai solicitat resetarea parolei pentru contul tău de la Raluca's Beauty Salon.</p>
+        <p>Apasă pe butonul de mai jos pentru a-ți reseta parola:</p>
+        <a href="${resetLink}" 
+           style="display: inline-block; padding: 12px 24px; background-color: #c9a96e; 
+                  color: white; text-decoration: none; border-radius: 8px; margin: 16px 0;">
+          Resetează parola
+        </a>
+        <p>Link-ul este valabil <strong>1 oră</strong>.</p>
+        <p>Dacă nu ai solicitat resetarea parolei, ignoră acest email.</p>
+      </div>
+    `,
+  });
+} catch (emailErr) {
+  console.error("Eroare trimitere email:", emailErr);
+}
 
-    return res.json({
-      message: "Dacă emailul există în sistem, vei primi instrucțiuni de resetare.",
-    });
+return res.json({
+  message: "Dacă emailul există în sistem, vei primi instrucțiuni de resetare.",
+});
+
   } catch (err) {
     console.error("Eroare forgot-password:", err);
     return res.status(500).json({ error: "Eroare server" });
