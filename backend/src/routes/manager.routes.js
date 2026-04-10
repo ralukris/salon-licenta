@@ -274,7 +274,7 @@ router.post("/manager/administratori", async (req, res) => {
     const result = await db.query(
       `
       INSERT INTO administratori
-        (id_locatie, nume, prenume, email, parola_hash, rol, activ)
+        (id_locatie, nume, prenume, email, parola_hash, rol, activ,)
       VALUES
         ($1, $2, $3, $4, $5, $6, true)
       RETURNING
@@ -318,7 +318,7 @@ router.post("/manager/administratori", async (req, res) => {
 // 6) Editează administrator
 router.patch("/manager/administratori/:id_administrator", async (req, res) => {
   const id_administrator = Number(req.params.id_administrator);
-  const { id_locatie, nume, prenume, email, rol, activ } = req.body;
+  const { id_locatie, nume, prenume, email, rol, activ, parola } = req.body;
 
   if (!Number.isInteger(id_administrator)) {
     return res.status(400).json({ error: "id_administrator invalid" });
@@ -378,36 +378,75 @@ router.patch("/manager/administratori/:id_administrator", async (req, res) => {
       }
     }
 
-    const result = await db.query(
-      `
-      UPDATE administratori
-      SET
-        id_locatie = $1,
-        nume = $2,
-        prenume = $3,
-        email = $4,
-        rol = $5,
-        activ = $6
-      WHERE id_administrator = $7
-      RETURNING
-        id_administrator,
-        id_locatie,
-        nume,
-        prenume,
-        email,
-        rol,
-        activ
-      `,
-      [
-        rol === "ManagerGeneral" ? null : Number(id_locatie),
-        String(nume).trim(),
-        String(prenume).trim(),
-        String(email).trim().toLowerCase(),
-        rol,
-        normalizeBoolean(activ, true),
-        id_administrator,
-      ]
-    );
+    let result;
+
+if (parola && String(parola).length >= 6) {
+  const parola_hash = await bcrypt.hash(String(parola), 10);
+
+  result = await db.query(
+    `
+    UPDATE administratori
+    SET
+      id_locatie = $1,
+      nume = $2,
+      prenume = $3,
+      email = $4,
+      rol = $5,
+      activ = $6,
+      parola_hash = $7
+    WHERE id_administrator = $8
+    RETURNING
+      id_administrator,
+      id_locatie,
+      nume,
+      prenume,
+      email,
+      rol,
+      activ
+    `,
+    [
+      rol === "ManagerGeneral" ? null : Number(id_locatie),
+      String(nume).trim(),
+      String(prenume).trim(),
+      String(email).trim().toLowerCase(),
+      rol,
+      normalizeBoolean(activ, true),
+      parola_hash,
+      id_administrator,
+    ]
+  );
+} else {
+  result = await db.query(
+    `
+    UPDATE administratori
+    SET
+      id_locatie = $1,
+      nume = $2,
+      prenume = $3,
+      email = $4,
+      rol = $5,
+      activ = $6
+    WHERE id_administrator = $7
+    RETURNING
+      id_administrator,
+      id_locatie,
+      nume,
+      prenume,
+      email,
+      rol,
+      activ
+    `,
+    [
+      rol === "ManagerGeneral" ? null : Number(id_locatie),
+      String(nume).trim(),
+      String(prenume).trim(),
+      String(email).trim().toLowerCase(),
+      rol,
+      normalizeBoolean(activ, true),
+      id_administrator,
+    ]
+  );
+}
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Administrator inexistent" });
