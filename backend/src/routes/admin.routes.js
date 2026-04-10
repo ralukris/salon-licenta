@@ -14,7 +14,7 @@ function isFutureDateOnly(value) {
   if (!value) return false;
 
   const inputDate = new Date(value);
-  if (Number.isNaN(inputDate.getTime())) return true;
+  if (Number.isNaN(inputDate.getTime())) return false;  
 
   inputDate.setHours(0, 0, 0, 0);
 
