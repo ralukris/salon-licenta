@@ -80,7 +80,7 @@ export async function getClients(token) {
 
 export async function getUnavailability(token, employeeId) {
   const res = await fetch(
-    `${API_BASE}/admin/angajati/${employeeId}/indisponibilitati`,
+    `${API_BASE}/admin/indisponibilitati/angajati/${employeeId}/`,
     {
       headers: { Authorization: `Bearer ${token}` },
     }
