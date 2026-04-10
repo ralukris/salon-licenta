@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
 });
 
 // 2) Adaugă produs + stoc
-router.post("/produse", async (req, res) => {
+router.post("/", async (req, res) => {
   const id_locatie = req.user.id_locatie;
   const { denumire_produs, unitate_masura, cantitate } = req.body;
 
@@ -88,7 +88,7 @@ router.patch("/:id_stoc", async (req, res) => {
 });
 
 // 4) Dezactivare produs
-router.patch("/produse/:id_produs/dezactiveaza", async (req, res) => {
+router.patch("/:id_produs/dezactiveaza", async (req, res) => {
   const id_produs = Number(req.params.id_produs);
   const id_locatie = req.user.id_locatie;
 
@@ -115,7 +115,7 @@ router.patch("/produse/:id_produs/dezactiveaza", async (req, res) => {
 });
 
 // 5) Reactivare produs
-router.patch("/produse/:id_produs/activeaza", async (req, res) => {
+router.patch("/:id_produs/activeaza", async (req, res) => {
   const id_produs = Number(req.params.id_produs);
   const id_locatie = req.user.id_locatie;
 
