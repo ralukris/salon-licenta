@@ -6,7 +6,6 @@ function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [resetLink, setResetLink] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,9 +31,6 @@ function ForgotPassword() {
       }
 
       setMessage(data.message || "Cererea a fost procesată.");
-      if (data.resetLink) {
-        setResetLink(data.resetLink);
-      }
       setEmail("");
     } catch {
       setError("Eroare server.");
@@ -62,13 +58,6 @@ function ForgotPassword() {
             Trimite cererea
           </button>
         </form>
-
-        {resetLink && (
-          <div className="message info" style={{ marginTop: 16 }}>
-            <div>Link de resetare generat pentru test:</div>
-            <a href={resetLink}>{resetLink}</a>
-          </div>
-        )}
       </div>
     </div>
   );
