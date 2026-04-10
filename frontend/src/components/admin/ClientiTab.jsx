@@ -108,44 +108,11 @@ function ClientiTab({
         <p className="muted-text">Nu există clienți.</p>
       )}
 
-      {!loadingClients && clientResults.length > 0 && (
-        <div className="profiles-list">
-          {clientResults.map((client) => (
-            <div key={client.id_client} className="profile-item">
-              <strong>
-                {client.nume} {client.prenume}
-              </strong>
-
-              <div className="muted-text">
-                Telefon: {client.telefon || "-"}
-              </div>
-
-              <div className="muted-text">
-                Email: {client.email || "-"}
-              </div>
-
-              <div className="muted-text">
-                Data nașterii: {formatDateOnly(client.data_nasterii)}
-              </div>
-
-              <div className="inline-actions" style={{ marginTop: 12 }}>
-                <button
-                  type="button"
-                  className="secondary-btn"
-                  onClick={() => startEditClient(client)}
-                >
-                  Editează
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {editingClientId && (
-        <div className="panel" style={{ marginTop: 16 }}>
-          <h4 className="section-title">Editează client</h4>
-
+     {!loadingClients && clientResults.length > 0 && (
+  <div className="profiles-list">
+    {clientResults.map((client) => (
+      <div key={client.id_client} className="profile-item">
+        {editingClientId === client.id_client ? (
           <div className="form-grid">
             <input
               type="text"
@@ -155,43 +122,30 @@ function ClientiTab({
                 setEditingClient((prev) => ({ ...prev, nume: e.target.value }))
               }
             />
-
             <input
               type="text"
               placeholder="Prenume"
               value={editingClient.prenume}
               onChange={(e) =>
-                setEditingClient((prev) => ({
-                  ...prev,
-                  prenume: e.target.value,
-                }))
+                setEditingClient((prev) => ({ ...prev, prenume: e.target.value }))
               }
             />
-
             <input
               type="text"
               placeholder="Telefon"
               value={editingClient.telefon}
               onChange={(e) =>
-                setEditingClient((prev) => ({
-                  ...prev,
-                  telefon: e.target.value,
-                }))
+                setEditingClient((prev) => ({ ...prev, telefon: e.target.value }))
               }
             />
-
             <input
               type="email"
               placeholder="Email (dacă există cont)"
               value={editingClient.email}
               onChange={(e) =>
-                setEditingClient((prev) => ({
-                  ...prev,
-                  email: e.target.value,
-                }))
+                setEditingClient((prev) => ({ ...prev, email: e.target.value }))
               }
             />
-
             <div>
               <label className="field-label">Data nașterii</label>
               <input
@@ -206,27 +160,48 @@ function ClientiTab({
                 }
               />
             </div>
+            <div className="inline-actions" style={{ marginTop: 14 }}>
+              <button
+                type="button"
+                className="primary-btn"
+                onClick={handleUpdateClient}
+              >
+                Salvează modificările
+              </button>
+              <button
+                type="button"
+                className="secondary-btn"
+                onClick={cancelEditClient}
+              >
+                Renunță
+              </button>
+            </div>
           </div>
-
-          <div className="inline-actions" style={{ marginTop: 14 }}>
-            <button
-              type="button"
-              className="primary-btn"
-              onClick={handleUpdateClient}
-            >
-              Salvează modificările
-            </button>
-
-            <button
-              type="button"
-              className="secondary-btn"
-              onClick={cancelEditClient}
-            >
-              Renunță
-            </button>
-          </div>
-        </div>
-      )}
+        ) : (
+          <>
+            <strong>
+              {client.nume} {client.prenume}
+            </strong>
+            <div className="muted-text">Telefon: {client.telefon || "-"}</div>
+            <div className="muted-text">Email: {client.email || "-"}</div>
+            <div className="muted-text">
+              Data nașterii: {formatDateOnly(client.data_nasterii)}
+            </div>
+            <div className="inline-actions" style={{ marginTop: 12 }}>
+              <button
+                type="button"
+                className="secondary-btn"
+                onClick={() => startEditClient(client)}
+              >
+                Editează
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    ))}
+  </div>
+)}
     </div>
   );
 }
