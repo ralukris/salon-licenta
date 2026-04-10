@@ -478,7 +478,7 @@ const renderFixedLogo = () => {
         src={logo}
         alt="Raluca's Beauty Salon"
         style={{
-          width: "120px",
+          width: "180px",
           height: "auto",
           opacity: 0.95,
         }}
