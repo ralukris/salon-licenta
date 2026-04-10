@@ -44,7 +44,7 @@ app.get("/health", async (req, res) => {
 app.use(publicRoutes);
 app.use(authRoutes);
 app.use(clientRoutes);
-app.use(adminRoutes);
+app.use("/admin", adminRoutes);
 app.use(managerRoutes);
 
 const PORT = process.env.PORT || 3000;

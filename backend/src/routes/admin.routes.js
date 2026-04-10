@@ -14,15 +14,14 @@ const router = express.Router();
 
 router.use(requireAdmin);
 
-router.use("/admin/angajati", angajatiRoutes);
-router.use("/admin/clienti", clientiRoutes);
-router.use("/admin/servicii", serviciiRoutes);
-router.use("/admin/stocuri", stocuriRoutes);
-router.use("/admin/produse", stocuriRoutes);
-router.use("/admin/programari", programariRoutes);
-router.use("/admin/indisponibilitati", indisponibilitatiRoutes);
-router.use("/admin/angajati", indisponibilitatiRoutes);
-router.use("/admin/chitante", chitanteRoutes);
-router.use("/admin/plati", platiRoutes);
+router.use("/angajati", angajatiRoutes);
+router.use("/clienti", clientiRoutes);
+router.use("/servicii", serviciiRoutes);
+router.use("/stocuri", stocuriRoutes);
+router.use("/produse", stocuriRoutes);
+router.use("/programari", programariRoutes);
+router.use("/indisponibilitati", indisponibilitatiRoutes);
+router.use("/chitante", chitanteRoutes);
+router.use("/plati", platiRoutes);
 
 module.exports = router;
