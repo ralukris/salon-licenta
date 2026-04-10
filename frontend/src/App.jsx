@@ -713,7 +713,7 @@ function App() {
         />
       </div>
 
-      <div className="topbar" style={{ marginBottom: "8px" }}>
+      <div className="topbar" style={{ marginBottom: "0px" }}>
         <div>
           <h2>Dashboard Client</h2>
           {user?.email && <div className="muted-text">{user.email}</div>}
