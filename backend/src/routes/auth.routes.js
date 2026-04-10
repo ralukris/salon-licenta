@@ -40,14 +40,10 @@ router.post("/auth/admin/login", async (req, res) => {
 
     let ok = false;
 
-    if (parola === admin.parola_hash) {
-      ok = true;
-    } else {
-      try {
-        ok = await bcrypt.compare(parola, admin.parola_hash);
-      } catch {
-        ok = false;
-      }
+    try {
+      ok = await bcrypt.compare(parola, admin.parola_hash);
+    } catch {
+      ok = false;
     }
 
     if (!ok) {
