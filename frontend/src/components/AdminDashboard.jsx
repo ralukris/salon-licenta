@@ -29,6 +29,7 @@ import {
   addProduct,
   updateStock,
   deactivateProduct,
+  activateProduct,
   addEmployee,
   updateEmployee,
   setEmployeeInactive,
@@ -931,6 +932,21 @@ function AdminDashboard({ token, user, onLogout }) {
     }
   };
 
+  const handleActivateProduct = async (id_produs) => {
+  clearMessages();
+
+  const ok = window.confirm("Sigur vrei să reactivezi acest produs?");
+  if (!ok) return;
+
+  try {
+    const data = await activateProduct(token, id_produs);
+    setMessage(data.message || "Produs reactivat.");
+    await fetchStocks();
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
   const handleAddEmployee = async (e) => {
     e.preventDefault();
     clearMessages();
@@ -1697,6 +1713,7 @@ const handleSaveServiciiAngajat = async () => {
           cancelEditStock={cancelEditStock}
           startEditStock={startEditStock}
           handleDeactivateProduct={handleDeactivateProduct}
+          handleActivateProduct={handleActivateProduct}
         />
       )}
 

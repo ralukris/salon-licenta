@@ -592,3 +592,20 @@ export async function saveAngajatServicii(token, idAngajat, servicii) {
 
   return data;
 }
+
+export async function activateProduct(token, idProdus) {
+  const res = await fetch(`${API_BASE}/admin/produse/${idProdus}/activeaza`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await parseJsonSafe(res);
+
+  if (!res.ok) {
+    throw new Error(getErrorMessage(data, "Eroare la reactivarea produsului."));
+  }
+
+  return data;
+}

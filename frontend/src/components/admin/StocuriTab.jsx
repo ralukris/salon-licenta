@@ -15,6 +15,7 @@ function StocuriTab({
   cancelEditStock,
   startEditStock,
   handleDeactivateProduct,
+  handleActivateProduct,
 }) {
   return (
     <div className="panel">
@@ -159,13 +160,21 @@ function StocuriTab({
                         Editează
                       </button>
 
-                      <button
-                        className="danger-btn"
-                        onClick={() => handleDeactivateProduct(stock.id_produs)}
-                        disabled={!stock.activ}
+                       {stock.activ ? (
+                         <button
+                           className="danger-btn"
+                           onClick={() => handleDeactivateProduct(stock.id_produs)}
+                          >
+                         Dezactivează
+                        </button>
+                        ) : (
+                        <button
+                      className="primary-btn"
+                      onClick={() => handleActivateProduct(stock.id_produs)}
                       >
-                        Dezactivează
-                      </button>
+                      Reactivează
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
