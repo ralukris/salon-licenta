@@ -7,6 +7,7 @@ import StocuriTab from "./admin/StocuriTab";
 import ServiciiTab from "./admin/ServiciiTab";
 import PlatiTab from "./admin/PlatiTab";
 import ClientiTab from "./admin/ClientiTab";
+import logo from "../assets/raluca-logo.png";
 import {
   getEmployees,
   getBookings,
@@ -1468,8 +1469,15 @@ function AdminDashboard({ token, user, onLogout }) {
   }, [bookingsGrouped, bookingSearch, bookingStatusFilter]);
 
   return (
-    <div className="dashboard-container">
-      <div className="topbar">
+     <div className="dashboard-container">
+    <div style={{ textAlign: "center", paddingTop: "16px", marginBottom: "4px" }}>
+      <img
+        src={logo}
+        alt="Raluca's Beauty Salon"
+        style={{ width: "160px", height: "auto", opacity: 0.95 }}
+      />
+    </div>
+    <div className="topbar">
         <div>
           <h2>Dashboard Admin</h2>
           <div className="muted-text">

@@ -8,6 +8,7 @@ import {
   updateAdministrator,
   dezactiveazaAdministrator,
 } from "../services/managerApi";
+import logo from "../assets/raluca-logo.png";
 
 function ManagerDashboard({ token, user, onLogout }) {
   const [activeTab, setActiveTab] = useState("locatii");
@@ -305,8 +306,16 @@ function ManagerDashboard({ token, user, onLogout }) {
   }
 
   return (
-    <div className="dashboard-container">
-      <div className="topbar">
+      <div className="dashboard-container">
+    <div style={{ textAlign: "center", paddingTop: "16px", marginBottom: "4px" }}>
+      <img
+        src={logo}
+        alt="Raluca's Beauty Salon"
+        style={{ width: "160px", height: "auto", opacity: 0.95 }}
+      />
+    </div>
+    <div className="topbar">
+
         <div>
           <h2>Manager General</h2>
           <div className="muted-text">{user?.email}</div>
