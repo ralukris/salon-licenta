@@ -462,17 +462,13 @@ function App() {
     return "status-badge";
   };
 
-  const renderFixedLogo = () => {
+const renderFixedLogo = () => {
   if (!token || !role) return null;
 
   return (
     <div
       style={{
-        position: "fixed",
-        top: "18px",
-        left: "22px",
-        zIndex: 1000,
-        pointerEvents: "none",
+        padding: "18px 0 0 22px",
       }}
     >
       <img
