@@ -12,7 +12,7 @@ function ForgotPassword() {
 
     setMessage("");
     setError("");
-    setResetLink("");
+
 
     try {
       const res = await fetch(`${API_BASE}/auth/forgot-password`, {
