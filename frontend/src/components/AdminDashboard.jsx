@@ -38,6 +38,8 @@ import {
   createClient,
   updateClient,
   createManualBooking,
+  getAngajatServicii,
+  saveAngajatServicii,
 } from "../services/adminApi";
 
 function AdminDashboard({ token, user, onLogout }) {
@@ -179,6 +181,10 @@ function AdminDashboard({ token, user, onLogout }) {
 
   const [employeeSearch, setEmployeeSearch] = useState("");
   const [stockSearch, setStockSearch] = useState("");
+
+  const [angajatServiciiId, setAngajatServiciiId] = useState(null);
+  const [angajatServiciiSelected, setAngajatServiciiSelected] = useState([]);
+  const [loadingAngajatServicii, setLoadingAngajatServicii] = useState(false);
 
   const todayForInput = useMemo(() => {
     const today = new Date();
@@ -1468,6 +1474,44 @@ function AdminDashboard({ token, user, onLogout }) {
     });
   }, [bookingsGrouped, bookingSearch, bookingStatusFilter]);
 
+  const handleOpenServiciiAngajat = async (emp) => {
+  clearMessages();
+  setAngajatServiciiId(emp.id_angajat);
+  setLoadingAngajatServicii(true);
+  try {
+    const data = await getAngajatServicii(token, emp.id_angajat);
+    setAngajatServiciiSelected(data.map(Number));
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoadingAngajatServicii(false);
+  }
+};
+
+const handleCloseServiciiAngajat = () => {
+  setAngajatServiciiId(null);
+  setAngajatServiciiSelected([]);
+};
+
+const handleToggleServiciu = (id_serviciu) => {
+  setAngajatServiciiSelected((prev) =>
+    prev.includes(Number(id_serviciu))
+      ? prev.filter((id) => id !== Number(id_serviciu))
+      : [...prev, Number(id_serviciu)]
+  );
+};
+
+const handleSaveServiciiAngajat = async () => {
+  clearMessages();
+  try {
+    const data = await saveAngajatServicii(token, angajatServiciiId, angajatServiciiSelected);
+    setMessage(data.message || "Servicii actualizate.");
+    handleCloseServiciiAngajat();
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
   return (
      <div className="dashboard-container">
     <div style={{ textAlign: "center", paddingTop: "16px", marginBottom: "4px" }}>
@@ -1591,6 +1635,14 @@ function AdminDashboard({ token, user, onLogout }) {
           startEditEmployee={startEditEmployee}
           handleSetEmployeeInactive={handleSetEmployeeInactive}
           formatDateOnly={formatDateOnly}
+          angajatServiciiId={angajatServiciiId}
+          angajatServiciiSelected={angajatServiciiSelected}
+          loadingAngajatServicii={loadingAngajatServicii}
+          services={services}
+          handleOpenServiciiAngajat={handleOpenServiciiAngajat}
+          handleCloseServiciiAngajat={handleCloseServiciiAngajat}
+          handleToggleServiciu={handleToggleServiciu}
+          handleSaveServiciiAngajat={handleSaveServiciiAngajat}
         />
       )}
 

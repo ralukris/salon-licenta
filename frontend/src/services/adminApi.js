@@ -539,3 +539,36 @@ export async function createManualBooking(token, payload) {
 
   return data;
 }
+
+export async function getAngajatServicii(token, idAngajat) {
+  const res = await fetch(`${API_BASE}/admin/angajati/${idAngajat}/servicii`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = await parseJsonSafe(res);
+
+  if (!res.ok) {
+    throw new Error(getErrorMessage(data, "Eroare la încărcarea serviciilor angajatului."));
+  }
+
+  return Array.isArray(data) ? data : [];
+}
+
+export async function saveAngajatServicii(token, idAngajat, servicii) {
+  const res = await fetch(`${API_BASE}/admin/angajati/${idAngajat}/servicii`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ servicii }),
+  });
+
+  const data = await parseJsonSafe(res);
+
+  if (!res.ok) {
+    throw new Error(getErrorMessage(data, "Eroare la salvarea serviciilor angajatului."));
+  }
+
+  return data;
+}

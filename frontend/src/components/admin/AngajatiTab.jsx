@@ -17,6 +17,15 @@ function AngajatiTab({
   startEditEmployee,
   handleSetEmployeeInactive,
   formatDateOnly,
+  formatDateOnly,
+  angajatServiciiId,
+  angajatServiciiSelected,
+  loadingAngajatServicii,
+  services,
+  handleOpenServiciiAngajat,
+  handleCloseServiciiAngajat,
+  handleToggleServiciu,
+  handleSaveServiciiAngajat,
 }) {
   return (
     <div className="panel">
@@ -335,7 +344,65 @@ function AngajatiTab({
                         >
                           Setează inactiv
                         </button>
+                        <button
+                          className="secondary-btn"
+                          onClick={() => handleOpenServiciiAngajat(emp)}
+                        >
+                          Servicii
+                       </button>
                       </div>
+                      {angajatServiciiId === emp.id_angajat && (
+  <div className="panel" style={{ marginTop: 12 }}>
+    <h4 style={{ marginBottom: 12 }}>
+      Servicii pentru {emp.nume} {emp.prenume}
+    </h4>
+
+    {loadingAngajatServicii ? (
+      <p className="muted-text">Se încarcă serviciile...</p>
+    ) : (
+      <>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+          {services
+            .filter((s) => s.activ !== false)
+            .map((s) => (
+              <label
+                key={s.id_serviciu}
+                style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}
+              >
+                <input
+                  type="checkbox"
+                  checked={angajatServiciiSelected.includes(Number(s.id_serviciu))}
+                  onChange={() => handleToggleServiciu(s.id_serviciu)}
+                  style={{ width: "auto", minHeight: "auto" }}
+                />
+                <span>
+                  {s.denumire_serviciu} • {s.durata_minute} min • {s.pret} lei
+                </span>
+              </label>
+            ))}
+        </div>
+
+        <div className="inline-actions">
+          <button
+            className="primary-btn"
+            type="button"
+            onClick={handleSaveServiciiAngajat}
+          >
+            Salvează
+          </button>
+
+          <button
+            className="secondary-btn"
+            type="button"
+            onClick={handleCloseServiciiAngajat}
+          >
+            Anulează
+          </button>
+        </div>
+      </>
+    )}
+  </div>
+)}
                     </>
                   )}
                 </div>
