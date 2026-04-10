@@ -226,30 +226,32 @@ function ManagerDashboard({ token, user, onLogout }) {
 
       if (editingAdminId) {
         const payload = {
-          id_locatie:
-            adminForm.rol === "ManagerGeneral"
-              ? null
-              : Number(adminForm.id_locatie),
-          nume: adminForm.nume,
-          prenume: adminForm.prenume,
-          email: adminForm.email,
-          rol: adminForm.rol,
-          activ: adminForm.activ,
-        };
+         id_locatie:
+         adminForm.rol === "ManagerGeneral"
+        ? null
+        : Number(adminForm.id_locatie),
+         nume: adminForm.nume,
+        prenume: adminForm.prenume,
+        email: adminForm.email,
+        rol: adminForm.rol,
+       activ: adminForm.activ,
+       ...(adminForm.parola ? { parola: adminForm.parola } : {}),
+      };
 
         response = await updateAdministrator(token, editingAdminId, payload);
       } else {
-        const payload = {
+         const payload = {
           id_locatie:
-            adminForm.rol === "ManagerGeneral"
-              ? null
-              : Number(adminForm.id_locatie),
-          nume: adminForm.nume,
-          prenume: adminForm.prenume,
+           adminForm.rol === "ManagerGeneral"
+           ? null
+           : Number(adminForm.id_locatie),
+           nume: adminForm.nume,
+           prenume: adminForm.prenume,
           email: adminForm.email,
-          parola: adminForm.parola,
           rol: adminForm.rol,
-        };
+          activ: adminForm.activ,
+        ...(adminForm.parola ? { parola: adminForm.parola } : {}),
+};
 
         response = await createAdministrator(token, payload);
       }
@@ -514,25 +516,23 @@ function ManagerDashboard({ token, user, onLogout }) {
                 required
               />
 
-              {!editingAdminId && (
-                <div className="password-field">
-                  <input
-                    type={showAdminPassword ? "text" : "password"}
-                    name="parola"
-                    placeholder="Parola"
-                    value={adminForm.parola}
-                    onChange={handleAdminFormChange}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="ghost-btn password-toggle"
-                    onClick={() => setShowAdminPassword((prev) => !prev)}
-                  >
-                    {showAdminPassword ? "Ascunde" : "Arată"}
-                  </button>
-                </div>
-              )}
+              <div className="password-field">
+                 <input
+                 type={showAdminPassword ? "text" : "password"}
+                  name="parola"
+                  placeholder={editingAdminId ? "Parolă nouă (opțional)" : "Parolă"}
+                      value={adminForm.parola}
+                   onChange={handleAdminFormChange}
+                  required={!editingAdminId}
+                />
+                <button
+               type="button"
+              className="ghost-btn password-toggle"
+              onClick={() => setShowAdminPassword((prev) => !prev)}
+               >
+              {showAdminPassword ? "Ascunde" : "Arată"}
+               </button>
+               </div>
 
               <label className="field-label">Rol</label>
               <select
