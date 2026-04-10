@@ -463,39 +463,31 @@ function App() {
   };
 
   const renderFixedLogo = () => {
-    if (!token || !role) return null;
+  if (!token || !role) return null;
 
-    const isMobile = window.innerWidth <= 768;
-
-    return (
-      <div
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: "18px",
+        left: "22px",
+        zIndex: 1000,
+        pointerEvents: "none",
+      }}
+    >
+      <img
+        src={logo}
+        alt="Raluca's Beauty Salon"
         style={{
-          position: isMobile ? "relative" : "fixed",
-          top: isMobile ? "auto" : "18px",
-          left: isMobile ? "auto" : "22px",
-          zIndex: 1000,
-          display: "flex",
-          justifyContent: isMobile ? "center" : "flex-start",
-          alignItems: "center",
-          width: isMobile ? "100%" : "auto",
-          marginBottom: isMobile ? "8px" : 0,
-          pointerEvents: "none",
+          width: "120px",
+          height: "auto",
+          display: "block",
+          opacity: 0.95,
         }}
-      >
-        <img
-          src={logo}
-          alt="Raluca's Beauty Salon"
-          style={{
-            width: isMobile ? "120px" : "150px",
-            maxWidth: isMobile ? "120px" : "150px",
-            height: "auto",
-            display: "block",
-            opacity: 0.95,
-          }}
-        />
-      </div>
-    );
-  };
+      />
+    </div>
+  );
+};
 
   const renderAuthPage = () => (
     <div className="app-shell">
