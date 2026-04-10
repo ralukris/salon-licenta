@@ -274,7 +274,7 @@ router.post("/manager/administratori", async (req, res) => {
     const result = await db.query(
       `
       INSERT INTO administratori
-        (id_locatie, nume, prenume, email, parola_hash, rol, activ,)
+        (id_locatie, nume, prenume, email, parola_hash, rol, activ)
       VALUES
         ($1, $2, $3, $4, $5, $6, true)
       RETURNING
