@@ -380,7 +380,6 @@ router.post("/auth/forgot-password", async (req, res) => {
 
     return res.json({
       message: "Dacă emailul există în sistem, vei primi instrucțiuni de resetare.",
-      resetLink,
     });
   } catch (err) {
     console.error("Eroare forgot-password:", err);
