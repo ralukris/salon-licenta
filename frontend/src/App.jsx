@@ -705,7 +705,7 @@ function App() {
   const renderClientDashboard = () => (
     <div className="app-shell" style={{ paddingTop: 0 }}>
     <div className="dashboard-container">
-      <div style={{ textAlign: "center", marginBottom: "0px", paddingTop: "16px" }}>
+      <div style={{ textAlign: "center", marginBottom: "4px", paddingTop: "16px" }}>
         <img
           src={logo}
           alt="Raluca's Beauty Salon"
@@ -713,7 +713,7 @@ function App() {
         />
       </div>
 
-      <div className="topbar" style={{ marginBottom: "0px" }}>
+      <div className="topbar" style={{ marginBottom: "16px", marginTop: "0px" }}>
         <div>
           <h2>Dashboard Client</h2>
           {user?.email && <div className="muted-text">{user.email}</div>}
