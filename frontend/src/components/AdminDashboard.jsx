@@ -8,41 +8,21 @@ import ServiciiTab from "./admin/ServiciiTab";
 import PlatiTab from "./admin/PlatiTab";
 import ClientiTab from "./admin/ClientiTab";
 import logo from "../assets/raluca-logo.png";
+
+import { useEmployees } from "../hooks/useEmployees";
+import { useBookings } from "../hooks/useBookings";
+import { useClients } from "../hooks/useClients";
+import { useServices } from "../hooks/useServices";
+import { useStocks } from "../hooks/useStocks";
+import { useReceipts } from "../hooks/useReceipts";
+
 import {
-  getEmployees,
-  getBookings,
-  getStocks,
-  getServices,
-  getClients,
   getUnavailability,
-  getAvailableReceipts,
-  getReceiptsHistory,
-  searchClients as searchClientsApi,
-  getEmployeesForService,
-  getMultipleAvailableSlots,
   createUnavailability,
   deleteUnavailability,
-  finalizeBooking,
-  cancelBooking,
   issueReceipt,
-  registerPayment,
-  addProduct,
-  updateStock,
-  deactivateProduct,
-  activateProduct,
-  addEmployee,
-  updateEmployee,
-  setEmployeeInactive,
-  activateEmployee,
-  addService,
-  updateService,
-  deactivateService,
-  activateService,
-  createClient,
-  updateClient,
-  createManualBooking,
-  getAngajatServicii,
-  saveAngajatServicii,
+  cancelBooking,
+  searchClients as searchClientsApi,
 } from "../services/adminApi";
 
 function AdminDashboard({ token, user, onLogout }) {
@@ -50,144 +30,7 @@ function AdminDashboard({ token, user, onLogout }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const [employees, setEmployees] = useState([]);
-  const [bookings, setBookings] = useState([]);
-  const [stocks, setStocks] = useState([]);
-  const [services, setServices] = useState([]);
-  const [clients, setClients] = useState([]);
-
-  const [loadingEmployees, setLoadingEmployees] = useState(false);
-  const [loadingBookings, setLoadingBookings] = useState(false);
-  const [loadingStocks, setLoadingStocks] = useState(false);
-  const [loadingServices, setLoadingServices] = useState(false);
-  const [loadingClients, setLoadingClients] = useState(false);
-
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
-  const [unavailabilityList, setUnavailabilityList] = useState([]);
-  const [loadingUnavailability, setLoadingUnavailability] = useState(false);
-
-  const [newUnavailability, setNewUnavailability] = useState({
-    id_angajat: "",
-    data_start: "",
-    data_final: "",
-    tip: "concediu",
-    motiv: "",
-  });
-
-  const [availableReceipts, setAvailableReceipts] = useState([]);
-  const [loadingReceipts, setLoadingReceipts] = useState(false);
-  const [receiptNumber, setReceiptNumber] = useState("");
-  const [paymentType, setPaymentType] = useState("Card");
-
-  const [showReceiptsHistory, setShowReceiptsHistory] = useState(false);
-  const [receiptsHistory, setReceiptsHistory] = useState([]);
-  const [loadingReceiptsHistory, setLoadingReceiptsHistory] = useState(false);
-  const [receiptsHistorySearch, setReceiptsHistorySearch] = useState("");
-
-  const [showAddProductForm, setShowAddProductForm] = useState(false);
-  const [newProduct, setNewProduct] = useState({
-    denumire_produs: "",
-    unitate_masura: "",
-    cantitate: "",
-  });
-
-  const [editingStockId, setEditingStockId] = useState(null);
-  const [editingStockValue, setEditingStockValue] = useState("");
-
-  const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
-  const [newEmployee, setNewEmployee] = useState({
-    nume: "",
-    prenume: "",
-    telefon: "",
-    email: "",
-    specializare: "",
-    salariu: "",
-    data_start_program: "",
-    data_nastere: "",
-  });
-
-  const [editingEmployeeId, setEditingEmployeeId] = useState(null);
-  const [editingEmployee, setEditingEmployee] = useState({
-    nume: "",
-    prenume: "",
-    telefon: "",
-    email: "",
-    specializare: "",
-    salariu: "",
-    data_start_program: "",
-    data_nastere: "",
-  });
-
-  const [serviceSearch, setServiceSearch] = useState("");
-  const [showAddServiceForm, setShowAddServiceForm] = useState(false);
-  const [newService, setNewService] = useState({
-    denumire_serviciu: "",
-    pret: "",
-    durata_minute: "",
-  });
-
-  const [editingServiceId, setEditingServiceId] = useState(null);
-  const [editingService, setEditingService] = useState({
-    denumire_serviciu: "",
-    pret: "",
-    durata_minute: "",
-  });
-
-  const [showManualBookingForm, setShowManualBookingForm] = useState(false);
-
-  // Search separat pentru programări manuale
-  const [manualClientSearch, setManualClientSearch] = useState("");
-  const [manualClientResults, setManualClientResults] = useState([]);
-  const [searchingManualClients, setSearchingManualClients] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
-
-  // Search local pentru tab-ul Clienți
-  const [clientsTabSearch, setClientsTabSearch] = useState("");
-
-  const [showNewClientForm, setShowNewClientForm] = useState(false);
-  const [creatingClient, setCreatingClient] = useState(false);
-  const [newClient, setNewClient] = useState({
-    nume: "",
-    prenume: "",
-    telefon: "",
-    data_nasterii: "",
-  });
-
-  const [editingClientId, setEditingClientId] = useState(null);
-  const [editingClient, setEditingClient] = useState({
-    nume: "",
-    prenume: "",
-    telefon: "",
-    data_nasterii: "",
-    email: "",
-  });
-
-  const [manualBooking, setManualBooking] = useState({
-    id_serviciu: "",
-    id_angajat: "",
-    data: "",
-    ora: "",
-    observatii: "",
-  });
-
-  const [manualBookingSegments, setManualBookingSegments] = useState([]);
-  const [availableManualSlots, setAvailableManualSlots] = useState([]);
-  const [loadingManualSlots, setLoadingManualSlots] = useState(false);
-  const [submittingManualBooking, setSubmittingManualBooking] = useState(false);
-
-  const [manualBookingEmployees, setManualBookingEmployees] = useState([]);
-  const [loadingManualBookingEmployees, setLoadingManualBookingEmployees] =
-    useState(false);
-
-  const [bookingSearch, setBookingSearch] = useState("");
-  const [bookingStatusFilter, setBookingStatusFilter] = useState("toate");
-
-  const [employeeSearch, setEmployeeSearch] = useState("");
-  const [stockSearch, setStockSearch] = useState("");
-
-  const [angajatServiciiId, setAngajatServiciiId] = useState(null);
-  const [angajatServiciiSelected, setAngajatServiciiSelected] = useState([]);
-  const [loadingAngajatServicii, setLoadingAngajatServicii] = useState(false);
+  const clearMessages = () => { setMessage(""); setError(""); };
 
   const todayForInput = useMemo(() => {
     const today = new Date();
@@ -206,26 +49,11 @@ function AdminDashboard({ token, user, onLogout }) {
     return `${yyyy}-${mm}-${dd}`;
   }, []);
 
-  const clearMessages = () => {
-    setMessage("");
-    setError("");
-  };
-
   const formatDateOnly = (value) => {
     if (!value) return "-";
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return "-";
     return date.toLocaleDateString("ro-RO");
-  };
-
-  const formatDateForInput = (value) => {
-    if (!value) return "";
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return "";
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const dd = String(date.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
   };
 
   const formatDateTime = (value) => {
@@ -244,509 +72,40 @@ function AdminDashboard({ token, user, onLogout }) {
     return `${hh}:${mm}`;
   };
 
-  const isFutureDate = (dateString) => {
-    if (!dateString) return false;
-    return dateString > todayForInput;
-  };
+  const employeesHook = useEmployees(token);
+  const servicesHook = useServices(token);
+  const stocksHook = useStocks(token);
+  const receiptsHook = useReceipts(token);
+  const clientsHook = useClients(token);
+  const bookingsHook = useBookings(token, user, servicesHook.services, employeesHook.employees);
 
-  const getServiceById = (id) =>
-    services.find((service) => String(service.id_serviciu) === String(id)) || null;
-
-  const getEmployeeById = (id) =>
-    manualBookingEmployees.find((emp) => String(emp.id_angajat) === String(id)) ||
-    employees.find((emp) => String(emp.id_angajat) === String(id)) ||
-    null;
-
-  const buildLocalDate = (dateString, timeString) => {
-    const [year, month, day] = dateString.split("-").map(Number);
-    const [hour, minute] = timeString.split(":").map(Number);
-    return new Date(year, month - 1, day, hour, minute, 0, 0);
-  };
-
-  const addMinutesToDate = (date, minutes) =>
-    new Date(date.getTime() + minutes * 60000);
-
-  const toSqlDateTime = (date) => {
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const dd = String(date.getDate()).padStart(2, "0");
-    const hh = String(date.getHours()).padStart(2, "0");
-    const mi = String(date.getMinutes()).padStart(2, "0");
-    const ss = String(date.getSeconds()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
-  };
-
-  const manualBookingTotalPrice = useMemo(() => {
-    return manualBookingSegments.reduce(
-      (sum, segment) => sum + Number(segment.pret || 0),
-      0
-    );
-  }, [manualBookingSegments]);
-
-  const manualBookingTotalDuration = useMemo(() => {
-    return manualBookingSegments.reduce(
-      (sum, segment) => sum + Number(segment.durata_minute || 0),
-      0
-    );
-  }, [manualBookingSegments]);
-
-  const computedManualSchedule = useMemo(() => {
-    if (
-      manualBookingSegments.length === 0 ||
-      !manualBooking.data ||
-      !manualBooking.ora
-    ) {
-      return [];
-    }
-
-    const result = [];
-    let cursor = buildLocalDate(manualBooking.data, manualBooking.ora);
-
-    for (const segment of manualBookingSegments) {
-      const start = new Date(cursor);
-      const end = addMinutesToDate(start, Number(segment.durata_minute || 0));
-
-      result.push({
-        ...segment,
-        start,
-        end,
-      });
-
-      cursor = end;
-    }
-
-    return result;
-  }, [manualBookingSegments, manualBooking.data, manualBooking.ora]);
-
-  const filteredReceiptsHistory = useMemo(() => {
-    const search = receiptsHistorySearch.trim().toLowerCase();
-
-    if (!search) return receiptsHistory;
-
-    return receiptsHistory.filter((item) => {
-      const searchableText = `
-        ${item.nr_chitanta || ""}
-        ${item.id_programare || ""}
-        ${item.nume_client || ""}
-        ${item.prenume_client || ""}
-        ${item.telefon_client || ""}
-        ${item.tip_plata || ""}
-        ${item.status_plata || ""}
-        ${item.suma_totala || ""}
-      `
-        .toLowerCase()
-        .trim();
-
-      return searchableText.includes(search);
-    });
-  }, [receiptsHistory, receiptsHistorySearch]);
-
-  const filteredEmployees = useMemo(() => {
-    const search = employeeSearch.trim().toLowerCase();
-
-    if (!search) return employees;
-
-    return employees.filter((emp) => {
-      const searchableText = `
-        ${emp.id_angajat || ""}
-        ${emp.nume || ""}
-        ${emp.prenume || ""}
-        ${emp.telefon || ""}
-        ${emp.email || ""}
-        ${emp.specializare || ""}
-        ${emp.salariu || ""}
-        ${emp.activ ? "activ" : "inactiv"}
-      `
-        .toLowerCase()
-        .trim();
-
-      return searchableText.includes(search);
-    });
-  }, [employees, employeeSearch]);
-
-  const filteredStocks = useMemo(() => {
-    const search = stockSearch.trim().toLowerCase();
-
-    if (!search) return stocks;
-
-    return stocks.filter((stock) => {
-      const searchableText = `
-        ${stock.id_produs || ""}
-        ${stock.id_stoc || ""}
-        ${stock.denumire_produs || ""}
-        ${stock.unitate_masura || ""}
-        ${stock.cantitate || ""}
-        ${stock.activ ? "activ" : "inactiv"}
-      `
-        .toLowerCase()
-        .trim();
-
-      return searchableText.includes(search);
-    });
-  }, [stocks, stockSearch]);
-
-  const filteredServices = useMemo(() => {
-    const search = serviceSearch.trim().toLowerCase();
-
-    if (!search) return services;
-
-    return services.filter((service) => {
-      const searchableText = `
-        ${service.id_serviciu || ""}
-        ${service.denumire_serviciu || ""}
-        ${service.pret || ""}
-        ${service.durata_minute || ""}
-        ${service.activ ? "activ" : "inactiv"}
-      `
-        .toLowerCase()
-        .trim();
-
-      return searchableText.includes(search);
-    });
-  }, [services, serviceSearch]);
-
-  const filteredClients = useMemo(() => {
-    const search = clientsTabSearch.trim().toLowerCase();
-
-    if (!search) return clients;
-
-    return clients.filter((client) => {
-      const searchableText = `
-        ${client.id_client || ""}
-        ${client.nume || ""}
-        ${client.prenume || ""}
-        ${client.telefon || ""}
-        ${client.email || ""}
-        ${client.data_nasterii || ""}
-      `
-        .toLowerCase()
-        .trim();
-
-      return searchableText.includes(search);
-    });
-  }, [clients, clientsTabSearch]);
-
-  const resetManualBooking = () => {
-    setManualClientSearch("");
-    setManualClientResults([]);
-    setSelectedClient(null);
-    setShowNewClientForm(false);
-    setCreatingClient(false);
-    setNewClient({
-      nume: "",
-      prenume: "",
-      telefon: "",
-      data_nasterii: "",
-    });
-    setManualBooking({
-      id_serviciu: "",
-      id_angajat: "",
-      data: "",
-      ora: "",
-      observatii: "",
-    });
-    setManualBookingSegments([]);
-    setAvailableManualSlots([]);
-    setManualBookingEmployees([]);
-  };
-
-  const fetchEmployees = async () => {
-    setLoadingEmployees(true);
-    try {
-      const data = await getEmployees(token);
-      setEmployees(data);
-    } catch (err) {
-      setError(err.message);
-      setEmployees([]);
-    } finally {
-      setLoadingEmployees(false);
-    }
-  };
-
-  const fetchBookings = async () => {
-    setLoadingBookings(true);
-    try {
-      const data = await getBookings(token);
-      setBookings(data);
-    } catch (err) {
-      setError(err.message);
-      setBookings([]);
-    } finally {
-      setLoadingBookings(false);
-    }
-  };
-
-  const fetchStocks = async () => {
-    setLoadingStocks(true);
-    try {
-      const data = await getStocks(token);
-      setStocks(data);
-    } catch (err) {
-      setError(err.message);
-      setStocks([]);
-    } finally {
-      setLoadingStocks(false);
-    }
-  };
-
-  const fetchServices = async () => {
-    setLoadingServices(true);
-    try {
-      const data = await getServices(token);
-      setServices(data);
-    } catch (err) {
-      setError(err.message);
-      setServices([]);
-    } finally {
-      setLoadingServices(false);
-    }
-  };
-
-  const fetchClients = async () => {
-    setLoadingClients(true);
-    try {
-      const data = await getClients(token);
-      setClients(data);
-    } catch (err) {
-      setError(err.message);
-      setClients([]);
-    } finally {
-      setLoadingClients(false);
-    }
-  };
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
+  const [unavailabilityList, setUnavailabilityList] = useState([]);
+  const [loadingUnavailability, setLoadingUnavailability] = useState(false);
+  const [newUnavailability, setNewUnavailability] = useState({
+    id_angajat: "", data_start: "", data_final: "", tip: "concediu", motiv: "",
+  });
 
   const fetchUnavailability = async (employeeId) => {
-    if (!employeeId) {
-      setUnavailabilityList([]);
-      return;
-    }
-
+    if (!employeeId) { setUnavailabilityList([]); return; }
     setLoadingUnavailability(true);
-
     try {
       const data = await getUnavailability(token, employeeId);
       setUnavailabilityList(data);
     } catch (err) {
       setError(err.message);
-      setUnavailabilityList([]);
     } finally {
       setLoadingUnavailability(false);
     }
   };
 
-  const fetchAvailableReceipts = async () => {
-    setLoadingReceipts(true);
-
-    try {
-      const data = await getAvailableReceipts(token);
-      setAvailableReceipts(data);
-    } catch (err) {
-      setError(err.message);
-      setAvailableReceipts([]);
-    } finally {
-      setLoadingReceipts(false);
-    }
-  };
-
-  const fetchReceiptsHistory = async () => {
-    setLoadingReceiptsHistory(true);
-
-    try {
-      const data = await getReceiptsHistory(token);
-      setReceiptsHistory(data);
-    } catch (err) {
-      setError(err.message);
-      setReceiptsHistory([]);
-    } finally {
-      setLoadingReceiptsHistory(false);
-    }
-  };
-
-  useEffect(() => {
-    clearMessages();
-    fetchEmployees();
-    fetchBookings();
-    fetchStocks();
-    fetchServices();
-    fetchClients();
-    fetchAvailableReceipts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
-
-  useEffect(() => {
-    if (activeTab !== "plati") {
-      setShowReceiptsHistory(false);
-      setReceiptsHistorySearch("");
-    }
-
-    if (activeTab !== "angajati") {
-      setEmployeeSearch("");
-    }
-
-    if (activeTab !== "stocuri") {
-      setStockSearch("");
-    }
-
-    if (activeTab !== "servicii") {
-      setServiceSearch("");
-    }
-
-    if (activeTab !== "clienti") {
-      cancelEditClient();
-      setClientsTabSearch("");
-    }
-  }, [activeTab]);
-
-  useEffect(() => {
-    if (selectedEmployeeId) {
-      fetchUnavailability(selectedEmployeeId);
-    } else {
-      setUnavailabilityList([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedEmployeeId]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const searchManualClients = async () => {
-      const term = manualClientSearch.trim();
-
-      if (term.length < 2) {
-        setManualClientResults([]);
-        setSearchingManualClients(false);
-        return;
-      }
-
-      setSearchingManualClients(true);
-
-      try {
-        const data = await searchClientsApi(token, term, controller.signal);
-        setError("");
-        setManualClientResults(data);
-      } catch (err) {
-        if (!controller.signal.aborted) {
-          setManualClientResults([]);
-          setError(err.message);
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setSearchingManualClients(false);
-        }
-      }
-    };
-
-    const timer = setTimeout(searchManualClients, 300);
-
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [manualClientSearch, token]);
-
-  useEffect(() => {
-    const fetchManualBookingEmployees = async () => {
-      if (!manualBooking.id_serviciu || !user?.id_locatie) {
-        setManualBookingEmployees([]);
-        return;
-      }
-
-      setLoadingManualBookingEmployees(true);
-
-      try {
-        const data = await getEmployeesForService(
-          user.id_locatie,
-          manualBooking.id_serviciu
-        );
-        setManualBookingEmployees(data);
-      } catch {
-        setManualBookingEmployees([]);
-      } finally {
-        setLoadingManualBookingEmployees(false);
-      }
-    };
-
-    fetchManualBookingEmployees();
-  }, [manualBooking.id_serviciu, user?.id_locatie]);
-
-  useEffect(() => {
-    setManualBooking((prev) => ({
-      ...prev,
-      id_angajat: "",
-    }));
-    setAvailableManualSlots([]);
-  }, [manualBooking.id_serviciu]);
-
-  useEffect(() => {
-    const fetchSlots = async () => {
-      if (manualBookingSegments.length === 0 || !manualBooking.data) {
-        setAvailableManualSlots([]);
-        return;
-      }
-
-      setLoadingManualSlots(true);
-
-      try {
-        const data = await getMultipleAvailableSlots(token, {
-          data: manualBooking.data,
-          segmente: manualBookingSegments.map((segment) => ({
-            id_serviciu: Number(segment.id_serviciu),
-            id_angajat: Number(segment.id_angajat),
-          })),
-        });
-
-        setAvailableManualSlots(data);
-      } catch {
-        setAvailableManualSlots([]);
-      } finally {
-        setLoadingManualSlots(false);
-      }
-    };
-
-    fetchSlots();
-  }, [manualBookingSegments, manualBooking.data, token]);
-
-  useEffect(() => {
-    if (!manualBooking.data) {
-      setManualBooking((prev) => ({
-        ...prev,
-        ora: "",
-      }));
-      return;
-    }
-
-    if (manualBooking.ora && !availableManualSlots.includes(manualBooking.ora)) {
-      setManualBooking((prev) => ({
-        ...prev,
-        ora: "",
-      }));
-    }
-  }, [availableManualSlots, manualBooking.ora, manualBooking.data]);
-
   const handleAddUnavailability = async (e) => {
     e.preventDefault();
     clearMessages();
-
-    if (!newUnavailability.id_angajat) {
-      setError("Selectează un angajat.");
-      return;
-    }
-
-    if (!newUnavailability.data_start || !newUnavailability.data_final) {
-      setError("Selectează perioada indisponibilității.");
-      return;
-    }
-
-    if (newUnavailability.data_start < todayForInput) {
-      setError("Nu poți adăuga indisponibilități în trecut.");
-      return;
-    }
-
-    if (newUnavailability.data_final < newUnavailability.data_start) {
-      setError("Data de final nu poate fi mai mică decât data de start.");
-      return;
-    }
-
+    if (!newUnavailability.id_angajat) { setError("Selectează un angajat."); return; }
+    if (!newUnavailability.data_start || !newUnavailability.data_final) { setError("Selectează perioada."); return; }
+    if (newUnavailability.data_start < todayForInput) { setError("Nu poți adăuga indisponibilități în trecut."); return; }
+    if (newUnavailability.data_final < newUnavailability.data_start) { setError("Data de final nu poate fi mai mică decât data de start."); return; }
     try {
       const data = await createUnavailability(token, {
         id_angajat: Number(newUnavailability.id_angajat),
@@ -755,21 +114,10 @@ function AdminDashboard({ token, user, onLogout }) {
         tip: newUnavailability.tip,
         motiv: newUnavailability.motiv,
       });
-
       setMessage(data.message || "Indisponibilitate adăugată.");
-      setNewUnavailability({
-        id_angajat: "",
-        data_start: "",
-        data_final: "",
-        tip: "concediu",
-        motiv: "",
-      });
-
-      await fetchEmployees();
-
-      if (selectedEmployeeId) {
-        await fetchUnavailability(selectedEmployeeId);
-      }
+      setNewUnavailability({ id_angajat: "", data_start: "", data_final: "", tip: "concediu", motiv: "" });
+      await employeesHook.fetchEmployees();
+      if (selectedEmployeeId) await fetchUnavailability(selectedEmployeeId);
     } catch (err) {
       setError(err.message);
     }
@@ -777,799 +125,328 @@ function AdminDashboard({ token, user, onLogout }) {
 
   const handleDeleteUnavailability = async (id) => {
     clearMessages();
-
     try {
       await deleteUnavailability(token, id);
-      setUnavailabilityList((prev) =>
-        prev.filter((item) => item.id_indisponibilitate !== id)
-      );
+      setUnavailabilityList((prev) => prev.filter((item) => item.id_indisponibilitate !== id));
       setMessage("Indisponibilitate ștearsă.");
     } catch (err) {
       setError(err.message);
     }
   };
 
+  useEffect(() => {
+    clearMessages();
+    employeesHook.fetchEmployees();
+    bookingsHook.fetchBookings();
+    stocksHook.fetchStocks();
+    servicesHook.fetchServices();
+    clientsHook.fetchClients();
+    receiptsHook.fetchAvailableReceipts();
+  }, [token]);
+
+  useEffect(() => {
+    if (activeTab !== "plati") {
+      receiptsHook.setShowReceiptsHistory(false);
+      receiptsHook.setReceiptsHistorySearch("");
+    }
+    if (activeTab !== "angajati") employeesHook.setEmployeeSearch("");
+    if (activeTab !== "stocuri") stocksHook.setStockSearch("");
+    if (activeTab !== "servicii") servicesHook.setServiceSearch("");
+    if (activeTab !== "clienti") {
+      clientsHook.cancelEditClient();
+      clientsHook.setClientsTabSearch("");
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (selectedEmployeeId) fetchUnavailability(selectedEmployeeId);
+    else setUnavailabilityList([]);
+  }, [selectedEmployeeId]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const search = async () => {
+      const term = bookingsHook.manualClientSearch.trim();
+      if (term.length < 2) {
+        bookingsHook.setManualClientResults([]);
+        bookingsHook.setSearchingManualClients(false);
+        return;
+      }
+      bookingsHook.setSearchingManualClients(true);
+      try {
+        const data = await searchClientsApi(token, term, controller.signal);
+        bookingsHook.setManualClientResults(data);
+        setError("");
+      } catch (err) {
+        if (!controller.signal.aborted) {
+          bookingsHook.setManualClientResults([]);
+          setError(err.message);
+        }
+      } finally {
+        if (!controller.signal.aborted) bookingsHook.setSearchingManualClients(false);
+      }
+    };
+    const timer = setTimeout(search, 300);
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, [bookingsHook.manualClientSearch, token]);
+
+  useEffect(() => {
+    bookingsHook.fetchManualBookingEmployees(bookingsHook.manualBooking.id_serviciu);
+  }, [bookingsHook.manualBooking.id_serviciu]);
+
+  useEffect(() => {
+    bookingsHook.setManualBooking((prev) => ({ ...prev, id_angajat: "" }));
+  }, [bookingsHook.manualBooking.id_serviciu]);
+
+  useEffect(() => {
+    bookingsHook.fetchManualSlots(bookingsHook.manualBookingSegments, bookingsHook.manualBooking.data);
+  }, [bookingsHook.manualBookingSegments, bookingsHook.manualBooking.data]);
+
+  useEffect(() => {
+    if (!bookingsHook.manualBooking.data) {
+      bookingsHook.setManualBooking((prev) => ({ ...prev, ora: "" }));
+      return;
+    }
+    if (bookingsHook.manualBooking.ora && !bookingsHook.availableManualSlots.includes(bookingsHook.manualBooking.ora)) {
+      bookingsHook.setManualBooking((prev) => ({ ...prev, ora: "" }));
+    }
+  }, [bookingsHook.availableManualSlots, bookingsHook.manualBooking.ora, bookingsHook.manualBooking.data]);
+
   const handleFinalizeBooking = async (idProgramare) => {
     clearMessages();
-
     try {
-      const data = await finalizeBooking(token, idProgramare);
+      const data = await bookingsHook.handleFinalizeBooking(idProgramare);
       setMessage(data.message || "Programare finalizată.");
-      await fetchBookings();
-    } catch (err) {
-      setError(err.message);
-    }
+    } catch (err) { setError(err.message); }
   };
 
   const handleCancelBooking = async (idProgramare) => {
     clearMessages();
-
     const ok = window.confirm("Sigur vrei să anulezi această programare?");
     if (!ok) return;
-
     try {
-      const data = await cancelBooking(token, idProgramare);
+      const data = await bookingsHook.handleCancelBooking(idProgramare);
       setMessage(data.message || "Programare anulată.");
-      await fetchBookings();
-      await fetchAvailableReceipts();
-      if (showReceiptsHistory) {
-        await fetchReceiptsHistory();
-      }
-    } catch (err) {
-      setError(err.message);
-    }
+      await receiptsHook.fetchAvailableReceipts();
+    } catch (err) { setError(err.message); }
   };
 
   const handleIssueReceipt = async (idProgramare) => {
     clearMessages();
-
     try {
       const data = await issueReceipt(token, idProgramare);
-
-      setReceiptNumber(
-        data?.chitanta?.nr_chitanta ? String(data.chitanta.nr_chitanta) : ""
-      );
-      setMessage(
-        data?.chitanta?.nr_chitanta
-          ? `Chitanță emisă. Număr: ${data.chitanta.nr_chitanta}`
-          : "Chitanță emisă."
-      );
-
-      await fetchBookings();
-      await fetchAvailableReceipts();
-      if (showReceiptsHistory) {
-        await fetchReceiptsHistory();
-      }
-    } catch (err) {
-      setError(err.message);
-    }
+      receiptsHook.setReceiptNumber(data?.chitanta?.nr_chitanta ? String(data.chitanta.nr_chitanta) : "");
+      setMessage(data?.chitanta?.nr_chitanta ? `Chitanță emisă. Număr: ${data.chitanta.nr_chitanta}` : "Chitanță emisă.");
+      await bookingsHook.fetchBookings();
+      await receiptsHook.fetchAvailableReceipts();
+    } catch (err) { setError(err.message); }
   };
 
   const handleRegisterPayment = async (e) => {
     e.preventDefault();
     clearMessages();
-
     try {
-      const data = await registerPayment(token, {
-        nr_chitanta: Number(receiptNumber),
-        tip_plata: paymentType,
-      });
-
+      const data = await receiptsHook.handleRegisterPayment();
       setMessage(data.message || "Plată înregistrată.");
-      setReceiptNumber("");
-      setPaymentType("Card");
-      await fetchAvailableReceipts();
-      if (showReceiptsHistory) {
-        await fetchReceiptsHistory();
-      }
-    } catch (err) {
-      setError(err.message);
-    }
+      if (receiptsHook.showReceiptsHistory) await receiptsHook.fetchReceiptsHistory();
+    } catch (err) { setError(err.message); }
   };
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
     clearMessages();
-
     try {
-      const data = await addProduct(token, {
-        denumire_produs: newProduct.denumire_produs,
-        unitate_masura: newProduct.unitate_masura,
-        cantitate: Number(newProduct.cantitate),
-      });
-
+      const data = await stocksHook.handleAddProduct();
       setMessage(data.message || "Produs adăugat.");
-      setNewProduct({
-        denumire_produs: "",
-        unitate_masura: "",
-        cantitate: "",
-      });
-      setShowAddProductForm(false);
-      await fetchStocks();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const startEditStock = (stock) => {
-    clearMessages();
-    setEditingStockId(stock.id_stoc);
-    setEditingStockValue(String(stock.cantitate));
-  };
-
-  const cancelEditStock = () => {
-    setEditingStockId(null);
-    setEditingStockValue("");
+    } catch (err) { setError(err.message); }
   };
 
   const handleUpdateStock = async (id_stoc) => {
     clearMessages();
-
     try {
-      const data = await updateStock(token, id_stoc, {
-        cantitate: Number(editingStockValue),
-      });
-
+      const data = await stocksHook.handleUpdateStock(id_stoc);
       setMessage(data.message || "Stoc actualizat.");
-      cancelEditStock();
-      await fetchStocks();
-    } catch (err) {
-      setError(err.message);
-    }
+    } catch (err) { setError(err.message); }
   };
 
   const handleDeactivateProduct = async (id_produs) => {
     clearMessages();
-
     const ok = window.confirm("Sigur vrei să dezactivezi acest produs?");
     if (!ok) return;
-
     try {
-      const data = await deactivateProduct(token, id_produs);
+      const data = await stocksHook.handleDeactivateProduct(id_produs);
       setMessage(data.message || "Produs dezactivat.");
-      await fetchStocks();
-    } catch (err) {
-      setError(err.message);
-    }
+    } catch (err) { setError(err.message); }
   };
 
   const handleActivateProduct = async (id_produs) => {
-  clearMessages();
-
-  const ok = window.confirm("Sigur vrei să reactivezi acest produs?");
-  if (!ok) return;
-
-  try {
-    const data = await activateProduct(token, id_produs);
-    setMessage(data.message || "Produs reactivat.");
-    await fetchStocks();
-  } catch (err) {
-    setError(err.message);
-  }
-};
+    clearMessages();
+    const ok = window.confirm("Sigur vrei să reactivezi acest produs?");
+    if (!ok) return;
+    try {
+      const data = await stocksHook.handleActivateProduct(id_produs);
+      setMessage(data.message || "Produs reactivat.");
+    } catch (err) { setError(err.message); }
+  };
 
   const handleAddEmployee = async (e) => {
     e.preventDefault();
     clearMessages();
-
-    if (isFutureDate(newEmployee.data_start_program)) {
-      setError("Data angajării nu poate fi în viitor.");
-      return;
-    }
-
-    if (isFutureDate(newEmployee.data_nastere)) {
-      setError("Data nașterii nu poate fi în viitor.");
-      return;
-    }
-
     try {
-      const data = await addEmployee(token, {
-        nume: newEmployee.nume.trim(),
-        prenume: newEmployee.prenume.trim(),
-        telefon: newEmployee.telefon.trim(),
-        email: newEmployee.email.trim(),
-        specializare: newEmployee.specializare.trim(),
-        salariu: Number(newEmployee.salariu),
-        data_start_program: newEmployee.data_start_program,
-        data_nastere: newEmployee.data_nastere,
-      });
-
+      const data = await employeesHook.handleAddEmployee(todayForInput);
       setMessage(data.message || "Angajat adăugat.");
-      setNewEmployee({
-        nume: "",
-        prenume: "",
-        telefon: "",
-        email: "",
-        specializare: "",
-        salariu: "",
-        data_start_program: "",
-        data_nastere: "",
-      });
-      setShowAddEmployeeForm(false);
-      await fetchEmployees();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const startEditEmployee = (emp) => {
-    clearMessages();
-    setEditingEmployeeId(emp.id_angajat);
-    setEditingEmployee({
-      nume: emp.nume || "",
-      prenume: emp.prenume || "",
-      telefon: emp.telefon || "",
-      email: emp.email || "",
-      specializare: emp.specializare || "",
-      salariu: emp.salariu ?? "",
-      data_start_program: formatDateForInput(emp.data_start_program),
-      data_nastere: formatDateForInput(emp.data_nastere),
-    });
-  };
-
-  const cancelEditEmployee = () => {
-    setEditingEmployeeId(null);
-    setEditingEmployee({
-      nume: "",
-      prenume: "",
-      telefon: "",
-      email: "",
-      specializare: "",
-      salariu: "",
-      data_start_program: "",
-      data_nastere: "",
-    });
+    } catch (err) { setError(err.message); }
   };
 
   const handleUpdateEmployee = async (id_angajat) => {
     clearMessages();
-
-    if (isFutureDate(editingEmployee.data_start_program)) {
-      setError("Data angajării nu poate fi în viitor.");
-      return;
-    }
-
-    if (isFutureDate(editingEmployee.data_nastere)) {
-      setError("Data nașterii nu poate fi în viitor.");
-      return;
-    }
-
     try {
-      const data = await updateEmployee(token, id_angajat, {
-        nume: editingEmployee.nume.trim(),
-        prenume: editingEmployee.prenume.trim(),
-        telefon: editingEmployee.telefon.trim(),
-        email: editingEmployee.email.trim(),
-        specializare: editingEmployee.specializare.trim(),
-        salariu: Number(editingEmployee.salariu),
-        data_start_program: editingEmployee.data_start_program,
-        data_nastere: editingEmployee.data_nastere,
-      });
-
+      const data = await employeesHook.handleUpdateEmployee(id_angajat, todayForInput);
       setMessage(data.message || "Angajat actualizat.");
-      cancelEditEmployee();
-      await fetchEmployees();
-    } catch (err) {
-      setError(err.message);
-    }
+    } catch (err) { setError(err.message); }
   };
 
   const handleSetEmployeeInactive = async (id_angajat) => {
     clearMessages();
-
     const ok = window.confirm("Sigur vrei să setezi acest angajat ca inactiv?");
     if (!ok) return;
-
     try {
-      const data = await setEmployeeInactive(token, id_angajat);
+      const data = await employeesHook.handleSetEmployeeInactive(id_angajat);
       setMessage(data.message || "Angajat setat inactiv.");
-      await fetchEmployees();
-    } catch (err) {
-      setError(err.message);
-    }
+    } catch (err) { setError(err.message); }
   };
 
   const handleActivateEmployee = async (id_angajat) => {
-  clearMessages();
+    clearMessages();
+    const ok = window.confirm("Sigur vrei să reactivezi acest angajat?");
+    if (!ok) return;
+    try {
+      const data = await employeesHook.handleActivateEmployee(id_angajat);
+      setMessage(data.message || "Angajat reactivat.");
+    } catch (err) { setError(err.message); }
+  };
 
-  const ok = window.confirm("Sigur vrei să reactivezi acest angajat?");
-  if (!ok) return;
+  const handleOpenServiciiAngajat = async (emp) => {
+    clearMessages();
+    try {
+      await employeesHook.handleOpenServiciiAngajat(emp);
+    } catch (err) { setError(err.message); }
+  };
 
-  try {
-    const data = await activateEmployee(token, id_angajat);
-    setMessage(data.message || "Angajat reactivat.");
-    await fetchEmployees();
-  } catch (err) {
-    setError(err.message);
-  }
-};
+  const handleSaveServiciiAngajat = async () => {
+    clearMessages();
+    try {
+      const data = await employeesHook.handleSaveServiciiAngajat();
+      setMessage(data.message || "Servicii actualizate.");
+    } catch (err) { setError(err.message); }
+  };
 
   const handleAddService = async (e) => {
     e.preventDefault();
     clearMessages();
-
     try {
-      const data = await addService(token, {
-        denumire_serviciu: newService.denumire_serviciu.trim(),
-        pret: Number(newService.pret),
-        durata_minute: Number(newService.durata_minute),
-      });
-
+      const data = await servicesHook.handleAddService();
       setMessage(data.message || "Serviciu adăugat.");
-      setNewService({
-        denumire_serviciu: "",
-        pret: "",
-        durata_minute: "",
-      });
-      setShowAddServiceForm(false);
-      await fetchServices();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const startEditService = (service) => {
-    clearMessages();
-    setEditingServiceId(service.id_serviciu);
-    setEditingService({
-      denumire_serviciu: service.denumire_serviciu || "",
-      pret: service.pret ?? "",
-      durata_minute: service.durata_minute ?? "",
-    });
-  };
-
-  const cancelEditService = () => {
-    setEditingServiceId(null);
-    setEditingService({
-      denumire_serviciu: "",
-      pret: "",
-      durata_minute: "",
-    });
+    } catch (err) { setError(err.message); }
   };
 
   const handleUpdateService = async (id_serviciu) => {
     clearMessages();
-
     try {
-      const data = await updateService(token, id_serviciu, {
-        denumire_serviciu: editingService.denumire_serviciu.trim(),
-        pret: Number(editingService.pret),
-        durata_minute: Number(editingService.durata_minute),
-      });
-
+      const data = await servicesHook.handleUpdateService(id_serviciu);
       setMessage(data.message || "Serviciu actualizat.");
-      cancelEditService();
-      await fetchServices();
-    } catch (err) {
-      setError(err.message);
-    }
+    } catch (err) { setError(err.message); }
   };
 
   const handleDeactivateService = async (id_serviciu) => {
     clearMessages();
-
     const ok = window.confirm("Sigur vrei să dezactivezi acest serviciu?");
     if (!ok) return;
-
     try {
-      const data = await deactivateService(token, id_serviciu);
+      const data = await servicesHook.handleDeactivateService(id_serviciu);
       setMessage(data.message || "Serviciu dezactivat.");
-      await fetchServices();
-    } catch (err) {
-      setError(err.message);
-    }
+    } catch (err) { setError(err.message); }
   };
 
   const handleActivateService = async (id_serviciu) => {
-  clearMessages();
-
-  const ok = window.confirm("Sigur vrei să reactivezi acest serviciu?");
-  if (!ok) return;
-
-  try {
-    const data = await activateService(token, id_serviciu);
-    setMessage(data.message || "Serviciu reactivat.");
-    await fetchServices();
-  } catch (err) {
-    setError(err.message);
-  }
-};
+    clearMessages();
+    const ok = window.confirm("Sigur vrei să reactivezi acest serviciu?");
+    if (!ok) return;
+    try {
+      const data = await servicesHook.handleActivateService(id_serviciu);
+      setMessage(data.message || "Serviciu reactivat.");
+    } catch (err) { setError(err.message); }
+  };
 
   const handleCreateNewClient = async () => {
     clearMessages();
-
-    if (
-      !newClient.nume.trim() ||
-      !newClient.prenume.trim() ||
-      !newClient.telefon.trim()
-    ) {
-      setError("Completează nume, prenume și telefon pentru clientul nou.");
-      return;
-    }
-
-    if (isFutureDate(newClient.data_nasterii)) {
-      setError("Data nașterii nu poate fi în viitor.");
-      return;
-    }
-
     try {
-      setCreatingClient(true);
-
-      const data = await createClient(token, {
-        nume: newClient.nume.trim(),
-        prenume: newClient.prenume.trim(),
-        telefon: newClient.telefon.trim(),
-        data_nasterii: newClient.data_nasterii || null,
-      });
-
-      await fetchClients();
-
+      const data = await clientsHook.handleCreateClient(bookingsHook.newClient, todayForInput);
+      await clientsHook.fetchClients();
       if (activeTab === "programari") {
-        setSelectedClient(data.client);
-        setManualClientSearch(
+        bookingsHook.setSelectedClient(data.client);
+        bookingsHook.setManualClientSearch(
           `${data.client.nume || ""} ${data.client.prenume || ""} ${data.client.telefon || ""}`.trim()
         );
-        setManualClientResults([data.client]);
+        bookingsHook.setManualClientResults([data.client]);
         setMessage(data.message || "Client nou adăugat și selectat.");
       } else {
         setMessage(data.message || "Client nou adăugat.");
       }
-
-      setNewClient({
-        nume: "",
-        prenume: "",
-        telefon: "",
-        data_nasterii: "",
-      });
-
-      setShowNewClientForm(false);
+      bookingsHook.setNewClient({ nume: "", prenume: "", telefon: "", data_nasterii: "" });
+      bookingsHook.setShowNewClientForm(false);
     } catch (err) {
       if (err.data?.client && activeTab === "programari") {
-        setSelectedClient(err.data.client);
-        setManualClientSearch(
+        bookingsHook.setSelectedClient(err.data.client);
+        bookingsHook.setManualClientSearch(
           `${err.data.client.nume || ""} ${err.data.client.prenume || ""} ${err.data.client.telefon || ""}`.trim()
         );
-        setManualClientResults([err.data.client]);
+        bookingsHook.setManualClientResults([err.data.client]);
       }
       setError(err.message);
-    } finally {
-      setCreatingClient(false);
     }
-  };
-
-  const startEditClient = (client) => {
-    clearMessages();
-    setEditingClientId(client.id_client);
-    setEditingClient({
-      nume: client.nume || "",
-      prenume: client.prenume || "",
-      telefon: client.telefon || "",
-      data_nasterii: formatDateForInput(client.data_nasterii),
-      email: client.email || "",
-    });
-  };
-
-  const cancelEditClient = () => {
-    setEditingClientId(null);
-    setEditingClient({
-      nume: "",
-      prenume: "",
-      telefon: "",
-      data_nasterii: "",
-      email: "",
-    });
   };
 
   const handleUpdateClient = async () => {
     clearMessages();
-
-    if (
-      !editingClientId ||
-      !editingClient.nume.trim() ||
-      !editingClient.prenume.trim() ||
-      !editingClient.telefon.trim() ||
-      !editingClient.data_nasterii
-    ) {
-      setError("Completează toate câmpurile obligatorii ale clientului.");
-      return;
-    }
-
-    if (isFutureDate(editingClient.data_nasterii)) {
-      setError("Data nașterii nu poate fi în viitor.");
-      return;
-    }
-
     try {
-      const data = await updateClient(token, editingClientId, {
-        nume: editingClient.nume.trim(),
-        prenume: editingClient.prenume.trim(),
-        telefon: editingClient.telefon.trim(),
-        data_nasterii: editingClient.data_nasterii,
-        email: editingClient.email.trim(),
-      });
-
-      setClients((prev) =>
-        prev.map((client) =>
-          Number(client.id_client) === Number(editingClientId)
-            ? data.client
-            : client
-        )
-      );
-
+      const data = await clientsHook.handleUpdateClient(todayForInput);
       setMessage(data.message || "Client actualizat cu succes.");
-      cancelEditClient();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const handleAddManualSegment = () => {
-    clearMessages();
-
-    if (!manualBooking.data) {
-      setError("Selectează mai întâi data vizitei.");
-      return;
-    }
-
-    if (!manualBooking.id_serviciu || !manualBooking.id_angajat) {
-      setError("Selectează serviciul și angajatul.");
-      return;
-    }
-
-    const service = getServiceById(manualBooking.id_serviciu);
-    const employee = getEmployeeById(manualBooking.id_angajat);
-
-    if (!service) {
-      setError("Serviciul selectat este invalid.");
-      return;
-    }
-
-    if (!employee) {
-      setError("Angajatul selectat este invalid.");
-      return;
-    }
-
-    const alreadyExists = manualBookingSegments.some(
-      (segment) =>
-        Number(segment.id_serviciu) === Number(service.id_serviciu) &&
-        Number(segment.id_angajat) === Number(employee.id_angajat)
-    );
-
-    if (alreadyExists) {
-      setError("Acest serviciu cu acest specialist a fost deja adăugat.");
-      return;
-    }
-
-    setManualBookingSegments((prev) => [
-      ...prev,
-      {
-        id_serviciu: Number(service.id_serviciu),
-        id_angajat: Number(employee.id_angajat),
-        denumire_serviciu: service.denumire_serviciu,
-        durata_minute: Number(service.durata_minute || 0),
-        pret: Number(service.pret || 0),
-        nume_angajat: `${employee.nume} ${employee.prenume}`,
-      },
-    ]);
-
-    setManualBooking((prev) => ({
-      ...prev,
-      id_serviciu: "",
-      id_angajat: "",
-      ora: "",
-    }));
-    setAvailableManualSlots([]);
-    setManualBookingEmployees([]);
-  };
-
-  const handleRemoveManualSegment = (indexToRemove) => {
-    clearMessages();
-
-    setManualBookingSegments((prev) =>
-      prev.filter((_, index) => index !== indexToRemove)
-    );
-
-    setManualBooking((prev) => ({
-      ...prev,
-      ora: "",
-    }));
-    setAvailableManualSlots([]);
+    } catch (err) { setError(err.message); }
   };
 
   const handleManualBookingSubmit = async (e) => {
     e.preventDefault();
     clearMessages();
-
-    if (!selectedClient) {
-      setError("Selectează un client din listă.");
-      return;
-    }
-
-    if (manualBookingSegments.length === 0) {
-      setError("Adaugă cel puțin un serviciu în programare.");
-      return;
-    }
-
-    if (!manualBooking.data || !manualBooking.ora) {
-      setError("Selectează data și ora de început.");
-      return;
-    }
-
-    setSubmittingManualBooking(true);
-
     try {
-      let cursor = buildLocalDate(manualBooking.data, manualBooking.ora);
-
-      const segmente = manualBookingSegments.map((segment) => {
-        const start = new Date(cursor);
-        cursor = addMinutesToDate(start, Number(segment.durata_minute || 0));
-
-        return {
-          id_serviciu: Number(segment.id_serviciu),
-          id_angajat: Number(segment.id_angajat),
-          data_start: toSqlDateTime(start),
-        };
-      });
-
-      const data = await createManualBooking(token, {
-        id_client: Number(selectedClient.id_client),
-        observatii: manualBooking.observatii.trim(),
-        segmente,
-      });
-
+      const data = await bookingsHook.handleManualBookingSubmit();
       setMessage(data.message || "Programare manuală adăugată.");
-      resetManualBooking();
-      setShowManualBookingForm(false);
-      await fetchBookings();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSubmittingManualBooking(false);
-    }
+    } catch (err) { setError(err.message); }
   };
 
-  const selectedEmployeeName =
-    employees.find((emp) => String(emp.id_angajat) === String(selectedEmployeeId)) ||
-    null;
+  const handleAddManualSegment = () => {
+    clearMessages();
+    try {
+      bookingsHook.handleAddManualSegment(todayForInput);
+    } catch (err) { setError(err.message); }
+  };
 
-  const selectedManualService = services.find(
-    (service) => String(service.id_serviciu) === String(manualBooking.id_serviciu)
+  const selectedEmployeeName = employeesHook.employees.find(
+    (emp) => String(emp.id_angajat) === String(selectedEmployeeId)
+  ) || null;
+
+  const selectedManualService = servicesHook.services.find(
+    (s) => String(s.id_serviciu) === String(bookingsHook.manualBooking.id_serviciu)
   );
-
-  const bookingsGrouped = useMemo(() => {
-    const map = new Map();
-
-    for (const item of bookings) {
-      const key = item.id_programare;
-
-      if (!map.has(key)) {
-        map.set(key, {
-          id_programare: item.id_programare,
-          id_locatie: item.id_locatie,
-          status: item.status,
-          observatii: item.observatii,
-          data_creare: item.data_creare,
-          denumire_locatie: item.denumire_locatie,
-          id_client: item.id_client,
-          nume_client: item.nume_client,
-          prenume_client: item.prenume_client,
-          telefon_client: item.telefon_client,
-          servicii: [],
-          total: 0,
-          hasReceipt: Boolean(item.nr_chitanta),
-        });
-      }
-
-      const group = map.get(key);
-
-      group.servicii.push({
-        id_programare_serviciu: item.id_programare_serviciu,
-        data_start: item.data_start,
-        data_final: item.data_final,
-        id_serviciu: item.id_serviciu,
-        denumire_serviciu: item.denumire_serviciu,
-        durata_minute: item.durata_minute,
-        pret: item.pret,
-        id_angajat: item.id_angajat,
-        nume_angajat: item.nume_angajat,
-        prenume_angajat: item.prenume_angajat,
-      });
-
-      group.total += Number(item.pret || 0);
-      if (item.nr_chitanta) {
-        group.hasReceipt = true;
-      }
-    }
-
-    return Array.from(map.values()).sort((a, b) => {
-      const firstA = a.servicii[0]?.data_start || "";
-      const firstB = b.servicii[0]?.data_start || "";
-      return new Date(firstB) - new Date(firstA);
-    });
-  }, [bookings]);
-
-  const filteredBookings = useMemo(() => {
-    const search = bookingSearch.trim().toLowerCase();
-
-    return bookingsGrouped.filter((booking) => {
-      const matchesStatus =
-        bookingStatusFilter === "toate" || booking.status === bookingStatusFilter;
-
-      if (!matchesStatus) return false;
-      if (!search) return true;
-
-      const serviceText = booking.servicii
-        .map(
-          (item) =>
-            `${item.denumire_serviciu} ${item.nume_angajat} ${item.prenume_angajat}`
-        )
-        .join(" ")
-        .toLowerCase();
-
-      const searchableText = `
-        ${booking.id_programare}
-        #${booking.id_programare}
-        ${booking.nume_client || ""}
-        ${booking.prenume_client || ""}
-        ${booking.telefon_client || ""}
-        ${booking.status || ""}
-        ${serviceText}
-      `
-        .toLowerCase()
-        .trim();
-
-      return searchableText.includes(search);
-    });
-  }, [bookingsGrouped, bookingSearch, bookingStatusFilter]);
-
-  const handleOpenServiciiAngajat = async (emp) => {
-  clearMessages();
-  setAngajatServiciiId(emp.id_angajat);
-  setLoadingAngajatServicii(true);
-  try {
-    const data = await getAngajatServicii(token, emp.id_angajat);
-    setAngajatServiciiSelected(data.map(Number));
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setLoadingAngajatServicii(false);
-  }
-};
-
-const handleCloseServiciiAngajat = () => {
-  setAngajatServiciiId(null);
-  setAngajatServiciiSelected([]);
-};
-
-const handleToggleServiciu = (id_serviciu) => {
-  setAngajatServiciiSelected((prev) =>
-    prev.includes(Number(id_serviciu))
-      ? prev.filter((id) => id !== Number(id_serviciu))
-      : [...prev, Number(id_serviciu)]
-  );
-};
-
-const handleSaveServiciiAngajat = async () => {
-  clearMessages();
-  try {
-    const data = await saveAngajatServicii(token, angajatServiciiId, angajatServiciiSelected);
-    setMessage(data.message || "Servicii actualizate.");
-    handleCloseServiciiAngajat();
-  } catch (err) {
-    setError(err.message);
-  }
-};
 
   return (
-     <div className="dashboard-container">
-    <div style={{ textAlign: "center", paddingTop: "16px", marginBottom: "4px" }}>
-      <img
-        src={logo}
-        alt="Raluca's Beauty Salon"
-        style={{ width: "160px", height: "auto", opacity: 0.95 }}
-      />
-    </div>
-    <div className="topbar">
+    <div className="dashboard-container">
+      <div style={{ textAlign: "center", paddingTop: "16px", marginBottom: "4px" }}>
+        <img src={logo} alt="Raluca's Beauty Salon"
+          style={{ width: "160px", height: "auto", opacity: 0.95 }} />
+      </div>
+
+      <div className="topbar">
         <div>
           <h2>Dashboard Admin</h2>
           <div className="muted-text">
@@ -1577,9 +454,7 @@ const handleSaveServiciiAngajat = async () => {
           </div>
           <div className="muted-text">Locație: {user?.id_locatie ?? "-"}</div>
         </div>
-        <button className="danger-btn" onClick={onLogout}>
-          Logout
-        </button>
+        <button className="danger-btn" onClick={onLogout}>Logout</button>
       </div>
 
       <div className="panel">
@@ -1592,47 +467,47 @@ const handleSaveServiciiAngajat = async () => {
       {activeTab === "programari" && (
         <ProgramariTab
           clearMessages={clearMessages}
-          showManualBookingForm={showManualBookingForm}
-          setShowManualBookingForm={setShowManualBookingForm}
-          resetManualBooking={resetManualBooking}
-          bookingSearch={bookingSearch}
-          setBookingSearch={setBookingSearch}
-          bookingStatusFilter={bookingStatusFilter}
-          setBookingStatusFilter={setBookingStatusFilter}
+          showManualBookingForm={bookingsHook.showManualBookingForm}
+          setShowManualBookingForm={bookingsHook.setShowManualBookingForm}
+          resetManualBooking={bookingsHook.resetManualBooking}
+          bookingSearch={bookingsHook.bookingSearch}
+          setBookingSearch={bookingsHook.setBookingSearch}
+          bookingStatusFilter={bookingsHook.bookingStatusFilter}
+          setBookingStatusFilter={bookingsHook.setBookingStatusFilter}
           handleManualBookingSubmit={handleManualBookingSubmit}
-          clientSearch={manualClientSearch}
-          setClientSearch={setManualClientSearch}
-          selectedClient={selectedClient}
-          setSelectedClient={setSelectedClient}
-          showNewClientForm={showNewClientForm}
-          setShowNewClientForm={setShowNewClientForm}
-          newClient={newClient}
-          setNewClient={setNewClient}
+          clientSearch={bookingsHook.manualClientSearch}
+          setClientSearch={bookingsHook.setManualClientSearch}
+          selectedClient={bookingsHook.selectedClient}
+          setSelectedClient={bookingsHook.setSelectedClient}
+          showNewClientForm={bookingsHook.showNewClientForm}
+          setShowNewClientForm={bookingsHook.setShowNewClientForm}
+          newClient={bookingsHook.newClient}
+          setNewClient={bookingsHook.setNewClient}
           todayForInput={todayForInput}
           handleCreateNewClient={handleCreateNewClient}
-          creatingClient={creatingClient}
-          searchingClients={searchingManualClients}
-          clientResults={manualClientResults}
-          manualBooking={manualBooking}
-          setManualBooking={setManualBooking}
+          creatingClient={bookingsHook.creatingClient}
+          searchingClients={bookingsHook.searchingManualClients}
+          clientResults={bookingsHook.manualClientResults}
+          manualBooking={bookingsHook.manualBooking}
+          setManualBooking={bookingsHook.setManualBooking}
           maxBookingDate={maxBookingDate}
-          manualBookingSegments={manualBookingSegments}
-          handleRemoveManualSegment={handleRemoveManualSegment}
-          manualBookingTotalDuration={manualBookingTotalDuration}
-          manualBookingTotalPrice={manualBookingTotalPrice}
-          loadingServices={loadingServices}
-          services={services}
-          loadingManualBookingEmployees={loadingManualBookingEmployees}
-          manualBookingEmployees={manualBookingEmployees}
+          manualBookingSegments={bookingsHook.manualBookingSegments}
+          handleRemoveManualSegment={bookingsHook.handleRemoveManualSegment}
+          manualBookingTotalDuration={bookingsHook.manualBookingTotalDuration}
+          manualBookingTotalPrice={bookingsHook.manualBookingTotalPrice}
+          loadingServices={servicesHook.loadingServices}
+          services={servicesHook.services}
+          loadingManualBookingEmployees={bookingsHook.loadingManualBookingEmployees}
+          manualBookingEmployees={bookingsHook.manualBookingEmployees}
           handleAddManualSegment={handleAddManualSegment}
-          loadingManualSlots={loadingManualSlots}
-          availableManualSlots={availableManualSlots}
+          loadingManualSlots={bookingsHook.loadingManualSlots}
+          availableManualSlots={bookingsHook.availableManualSlots}
           selectedManualService={selectedManualService}
-          computedManualSchedule={computedManualSchedule}
+          computedManualSchedule={bookingsHook.computedManualSchedule}
           formatTimeHHMM={formatTimeHHMM}
-          submittingManualBooking={submittingManualBooking}
-          loadingBookings={loadingBookings}
-          filteredBookings={filteredBookings}
+          submittingManualBooking={bookingsHook.submittingManualBooking}
+          loadingBookings={bookingsHook.loadingBookings}
+          filteredBookings={bookingsHook.filteredBookings}
           formatDateTime={formatDateTime}
           handleFinalizeBooking={handleFinalizeBooking}
           handleCancelBooking={handleCancelBooking}
@@ -1642,22 +517,22 @@ const handleSaveServiciiAngajat = async () => {
 
       {activeTab === "clienti" && (
         <ClientiTab
-          clientSearch={clientsTabSearch}
-          setClientSearch={setClientsTabSearch}
-          loadingClients={loadingClients}
-          clientResults={filteredClients}
-          showNewClientForm={showNewClientForm}
-          setShowNewClientForm={setShowNewClientForm}
-          newClient={newClient}
-          setNewClient={setNewClient}
+          clientSearch={clientsHook.clientsTabSearch}
+          setClientSearch={clientsHook.setClientsTabSearch}
+          loadingClients={clientsHook.loadingClients}
+          clientResults={clientsHook.filteredClients}
+          showNewClientForm={bookingsHook.showNewClientForm}
+          setShowNewClientForm={bookingsHook.setShowNewClientForm}
+          newClient={bookingsHook.newClient}
+          setNewClient={bookingsHook.setNewClient}
           todayForInput={todayForInput}
           handleCreateNewClient={handleCreateNewClient}
-          creatingClient={creatingClient}
-          editingClientId={editingClientId}
-          editingClient={editingClient}
-          setEditingClient={setEditingClient}
-          startEditClient={startEditClient}
-          cancelEditClient={cancelEditClient}
+          creatingClient={bookingsHook.creatingClient}
+          editingClientId={clientsHook.editingClientId}
+          editingClient={clientsHook.editingClient}
+          setEditingClient={clientsHook.setEditingClient}
+          startEditClient={clientsHook.startEditClient}
+          cancelEditClient={clientsHook.cancelEditClient}
           handleUpdateClient={handleUpdateClient}
           formatDateOnly={formatDateOnly}
         />
@@ -1665,33 +540,33 @@ const handleSaveServiciiAngajat = async () => {
 
       {activeTab === "angajati" && (
         <AngajatiTab
-          showAddEmployeeForm={showAddEmployeeForm}
-          setShowAddEmployeeForm={setShowAddEmployeeForm}
-          employeeSearch={employeeSearch}
-          setEmployeeSearch={setEmployeeSearch}
+          showAddEmployeeForm={employeesHook.showAddEmployeeForm}
+          setShowAddEmployeeForm={employeesHook.setShowAddEmployeeForm}
+          employeeSearch={employeesHook.employeeSearch}
+          setEmployeeSearch={employeesHook.setEmployeeSearch}
           handleAddEmployee={handleAddEmployee}
-          newEmployee={newEmployee}
-          setNewEmployee={setNewEmployee}
+          newEmployee={employeesHook.newEmployee}
+          setNewEmployee={employeesHook.setNewEmployee}
           todayForInput={todayForInput}
-          loadingEmployees={loadingEmployees}
-          filteredEmployees={filteredEmployees}
-          editingEmployeeId={editingEmployeeId}
-          editingEmployee={editingEmployee}
-          setEditingEmployee={setEditingEmployee}
+          loadingEmployees={employeesHook.loadingEmployees}
+          filteredEmployees={employeesHook.filteredEmployees}
+          editingEmployeeId={employeesHook.editingEmployeeId}
+          editingEmployee={employeesHook.editingEmployee}
+          setEditingEmployee={employeesHook.setEditingEmployee}
           handleUpdateEmployee={handleUpdateEmployee}
-          cancelEditEmployee={cancelEditEmployee}
-          startEditEmployee={startEditEmployee}
+          cancelEditEmployee={employeesHook.cancelEditEmployee}
+          startEditEmployee={employeesHook.startEditEmployee}
           handleSetEmployeeInactive={handleSetEmployeeInactive}
-          formatDateOnly={formatDateOnly}
-          angajatServiciiId={angajatServiciiId}
-          angajatServiciiSelected={angajatServiciiSelected}
-          loadingAngajatServicii={loadingAngajatServicii}
-          services={services}
-          handleOpenServiciiAngajat={handleOpenServiciiAngajat}
-          handleCloseServiciiAngajat={handleCloseServiciiAngajat}
-          handleToggleServiciu={handleToggleServiciu}
-          handleSaveServiciiAngajat={handleSaveServiciiAngajat}
           handleActivateEmployee={handleActivateEmployee}
+          formatDateOnly={formatDateOnly}
+          angajatServiciiId={employeesHook.angajatServiciiId}
+          angajatServiciiSelected={employeesHook.angajatServiciiSelected}
+          loadingAngajatServicii={employeesHook.loadingAngajatServicii}
+          services={servicesHook.services}
+          handleOpenServiciiAngajat={handleOpenServiciiAngajat}
+          handleCloseServiciiAngajat={employeesHook.handleCloseServiciiAngajat}
+          handleToggleServiciu={employeesHook.handleToggleServiciu}
+          handleSaveServiciiAngajat={handleSaveServiciiAngajat}
         />
       )}
 
@@ -1700,7 +575,7 @@ const handleSaveServiciiAngajat = async () => {
           handleAddUnavailability={handleAddUnavailability}
           newUnavailability={newUnavailability}
           setNewUnavailability={setNewUnavailability}
-          employees={employees}
+          employees={employeesHook.employees}
           todayForInput={todayForInput}
           selectedEmployeeId={selectedEmployeeId}
           setSelectedEmployeeId={setSelectedEmployeeId}
@@ -1714,21 +589,21 @@ const handleSaveServiciiAngajat = async () => {
 
       {activeTab === "stocuri" && (
         <StocuriTab
-          showAddProductForm={showAddProductForm}
-          setShowAddProductForm={setShowAddProductForm}
-          stockSearch={stockSearch}
-          setStockSearch={setStockSearch}
+          showAddProductForm={stocksHook.showAddProductForm}
+          setShowAddProductForm={stocksHook.setShowAddProductForm}
+          stockSearch={stocksHook.stockSearch}
+          setStockSearch={stocksHook.setStockSearch}
           handleAddProduct={handleAddProduct}
-          newProduct={newProduct}
-          setNewProduct={setNewProduct}
-          loadingStocks={loadingStocks}
-          filteredStocks={filteredStocks}
-          editingStockId={editingStockId}
-          editingStockValue={editingStockValue}
-          setEditingStockValue={setEditingStockValue}
+          newProduct={stocksHook.newProduct}
+          setNewProduct={stocksHook.setNewProduct}
+          loadingStocks={stocksHook.loadingStocks}
+          filteredStocks={stocksHook.filteredStocks}
+          editingStockId={stocksHook.editingStockId}
+          editingStockValue={stocksHook.editingStockValue}
+          setEditingStockValue={stocksHook.setEditingStockValue}
           handleUpdateStock={handleUpdateStock}
-          cancelEditStock={cancelEditStock}
-          startEditStock={startEditStock}
+          cancelEditStock={stocksHook.cancelEditStock}
+          startEditStock={stocksHook.startEditStock}
           handleDeactivateProduct={handleDeactivateProduct}
           handleActivateProduct={handleActivateProduct}
         />
@@ -1736,21 +611,21 @@ const handleSaveServiciiAngajat = async () => {
 
       {activeTab === "servicii" && (
         <ServiciiTab
-          showAddServiceForm={showAddServiceForm}
-          setShowAddServiceForm={setShowAddServiceForm}
-          serviceSearch={serviceSearch}
-          setServiceSearch={setServiceSearch}
+          showAddServiceForm={servicesHook.showAddServiceForm}
+          setShowAddServiceForm={servicesHook.setShowAddServiceForm}
+          serviceSearch={servicesHook.serviceSearch}
+          setServiceSearch={servicesHook.setServiceSearch}
           handleAddService={handleAddService}
-          newService={newService}
-          setNewService={setNewService}
-          loadingServices={loadingServices}
-          filteredServices={filteredServices}
-          editingServiceId={editingServiceId}
-          editingService={editingService}
-          setEditingService={setEditingService}
+          newService={servicesHook.newService}
+          setNewService={servicesHook.setNewService}
+          loadingServices={servicesHook.loadingServices}
+          filteredServices={servicesHook.filteredServices}
+          editingServiceId={servicesHook.editingServiceId}
+          editingService={servicesHook.editingService}
+          setEditingService={servicesHook.setEditingService}
           handleUpdateService={handleUpdateService}
-          cancelEditService={cancelEditService}
-          startEditService={startEditService}
+          cancelEditService={servicesHook.cancelEditService}
+          startEditService={servicesHook.startEditService}
           handleDeactivateService={handleDeactivateService}
           handleActivateService={handleActivateService}
         />
@@ -1759,21 +634,21 @@ const handleSaveServiciiAngajat = async () => {
       {activeTab === "plati" && (
         <PlatiTab
           clearMessages={clearMessages}
-          showReceiptsHistory={showReceiptsHistory}
-          setShowReceiptsHistory={setShowReceiptsHistory}
-          fetchReceiptsHistory={fetchReceiptsHistory}
-          setReceiptsHistorySearch={setReceiptsHistorySearch}
+          showReceiptsHistory={receiptsHook.showReceiptsHistory}
+          setShowReceiptsHistory={receiptsHook.setShowReceiptsHistory}
+          fetchReceiptsHistory={receiptsHook.fetchReceiptsHistory}
+          setReceiptsHistorySearch={receiptsHook.setReceiptsHistorySearch}
           handleRegisterPayment={handleRegisterPayment}
-          receiptNumber={receiptNumber}
-          setReceiptNumber={setReceiptNumber}
-          loadingReceipts={loadingReceipts}
-          availableReceipts={availableReceipts}
-          paymentType={paymentType}
-          setPaymentType={setPaymentType}
+          receiptNumber={receiptsHook.receiptNumber}
+          setReceiptNumber={receiptsHook.setReceiptNumber}
+          loadingReceipts={receiptsHook.loadingReceipts}
+          availableReceipts={receiptsHook.availableReceipts}
+          paymentType={receiptsHook.paymentType}
+          setPaymentType={receiptsHook.setPaymentType}
           formatDateTime={formatDateTime}
-          receiptsHistorySearch={receiptsHistorySearch}
-          loadingReceiptsHistory={loadingReceiptsHistory}
-          filteredReceiptsHistory={filteredReceiptsHistory}
+          receiptsHistorySearch={receiptsHook.receiptsHistorySearch}
+          loadingReceiptsHistory={receiptsHook.loadingReceiptsHistory}
+          filteredReceiptsHistory={receiptsHook.filteredReceiptsHistory}
         />
       )}
     </div>
