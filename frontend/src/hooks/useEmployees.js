@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   getEmployees,
   addEmployee,
@@ -9,7 +9,7 @@ import {
   saveAngajatServicii,
 } from "../services/adminApi";
 
-export function useEmployees(token, services) {
+export function useEmployees(token) {
   const [employees, setEmployees] = useState([]);
   const [loadingEmployees, setLoadingEmployees] = useState(false);
   const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
@@ -29,6 +29,19 @@ export function useEmployees(token, services) {
   const [angajatServiciiId, setAngajatServiciiId] = useState(null);
   const [angajatServiciiSelected, setAngajatServiciiSelected] = useState([]);
   const [loadingAngajatServicii, setLoadingAngajatServicii] = useState(false);
+
+  const filteredEmployees = useMemo(() => {
+    const search = employeeSearch.trim().toLowerCase();
+    if (!search) return employees;
+    return employees.filter((emp) => {
+      const searchableText = `
+        ${emp.id_angajat || ""} ${emp.nume || ""} ${emp.prenume || ""}
+        ${emp.telefon || ""} ${emp.email || ""} ${emp.specializare || ""}
+        ${emp.activ ? "activ" : "inactiv"}
+      `.toLowerCase().trim();
+      return searchableText.includes(search);
+    });
+  }, [employees, employeeSearch]);
 
   const formatDateForInput = (value) => {
     if (!value) return "";
@@ -183,6 +196,7 @@ export function useEmployees(token, services) {
     angajatServiciiId,
     angajatServiciiSelected,
     loadingAngajatServicii,
+    filteredEmployees,
     fetchEmployees,
     handleAddEmployee,
     startEditEmployee,
