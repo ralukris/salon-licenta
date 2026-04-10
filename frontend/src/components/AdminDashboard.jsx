@@ -29,6 +29,17 @@ function AdminDashboard({ token, user, onLogout }) {
   const [activeTab, setActiveTab] = useState("programari");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  useEffect(() => {
+  if (!message) return;
+  const timer = setTimeout(() => setMessage(""), 3000);
+  return () => clearTimeout(timer);
+    }, [message]);
+
+  useEffect(() => {
+  if (!error) return;
+  const timer = setTimeout(() => setError(""), 3000);
+  return () => clearTimeout(timer);
+   }, [error]);
 
   const clearMessages = () => { setMessage(""); setError(""); };
 
