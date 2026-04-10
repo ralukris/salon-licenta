@@ -15,6 +15,7 @@ function ServiciiTab({
   cancelEditService,
   startEditService,
   handleDeactivateService,
+  handleActivateService,
 }) {
   return (
     <div className="panel">
@@ -195,15 +196,21 @@ function ServiciiTab({
                           Editează
                         </button>
 
+                       {service.activ ? (
                         <button
                           className="danger-btn"
-                          onClick={() =>
-                            handleDeactivateService(service.id_serviciu)
-                          }
-                          disabled={!service.activ}
-                        >
-                          Dezactivează
+                           onClick={() => handleDeactivateService(service.id_serviciu)}
+                          >
+                        Dezactivează
                         </button>
+                           ) : (
+                          <button
+                         className="primary-btn"
+                        onClick={() => handleActivateService(service.id_serviciu)}
+                        >
+                          Reactivează
+                         </button>
+                         )}
                       </div>
                     </>
                   )}

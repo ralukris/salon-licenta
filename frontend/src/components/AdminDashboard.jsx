@@ -35,6 +35,7 @@ import {
   addService,
   updateService,
   deactivateService,
+  activateService,
   createClient,
   updateClient,
   createManualBooking,
@@ -1127,6 +1128,21 @@ function AdminDashboard({ token, user, onLogout }) {
     }
   };
 
+  const handleActivateService = async (id_serviciu) => {
+  clearMessages();
+
+  const ok = window.confirm("Sigur vrei să reactivezi acest serviciu?");
+  if (!ok) return;
+
+  try {
+    const data = await activateService(token, id_serviciu);
+    setMessage(data.message || "Serviciu reactivat.");
+    await fetchServices();
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
   const handleCreateNewClient = async () => {
     clearMessages();
 
@@ -1702,6 +1718,7 @@ const handleSaveServiciiAngajat = async () => {
           cancelEditService={cancelEditService}
           startEditService={startEditService}
           handleDeactivateService={handleDeactivateService}
+          handleActivateService={handleActivateService}
         />
       )}
 

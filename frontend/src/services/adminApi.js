@@ -473,6 +473,26 @@ export async function deactivateService(token, idServiciu) {
   return data;
 }
 
+export async function activateService(token, idServiciu) {
+  const res = await fetch(
+    `${API_BASE}/admin/servicii/${idServiciu}/activeaza`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const data = await parseJsonSafe(res);
+
+  if (!res.ok) {
+    throw new Error(getErrorMessage(data, "Eroare la reactivarea serviciului."));
+  }
+
+  return data;
+}
+
 export async function createClient(token, payload) {
   const res = await fetch(`${API_BASE}/admin/clienti`, {
     method: "POST",
