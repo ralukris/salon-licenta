@@ -462,30 +462,7 @@ function App() {
     return "status-badge";
   };
 
-const renderFixedLogo = () => {
-  if (!token || !role) return null;
 
-  return (
-    <div
-      style={{
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        padding: "12px 0 0 0",
-      }}
-    >
-      <img
-        src={logo}
-        alt="Raluca's Beauty Salon"
-        style={{
-          width: "180px",
-          height: "auto",
-          opacity: 0.95,
-        }}
-      />
-    </div>
-  );
-};
 
   const renderAuthPage = () => (
     <div className="app-shell">
@@ -727,16 +704,24 @@ const renderFixedLogo = () => {
 
   const renderClientDashboard = () => (
     <div className="app-shell">
-      <div className="dashboard-container">
-        <div className="topbar">
-          <div>
-            <h2>Dashboard Client</h2>
-            {user?.email && <div className="muted-text">{user.email}</div>}
-          </div>
-          <button className="danger-btn" onClick={logout}>
-            Logout
-          </button>
+    <div className="dashboard-container">
+      <div style={{ textAlign: "center", marginBottom: "8px" }}>
+        <img
+          src={logo}
+          alt="Raluca's Beauty Salon"
+          style={{ width: "160px", height: "auto", opacity: 0.95 }}
+        />
+      </div>
+
+      <div className="topbar">
+        <div>
+          <h2>Dashboard Client</h2>
+          {user?.email && <div className="muted-text">{user.email}</div>}
         </div>
+        <button className="danger-btn" onClick={logout}>
+          Logout
+        </button>
+      </div>
 
         {message && <div className="message info">{message}</div>}
 
@@ -971,7 +956,6 @@ const renderFixedLogo = () => {
 
   return (
     <>
-      {renderFixedLogo()}
 
       <Routes>
         <Route
