@@ -741,7 +741,7 @@ function App() {
                   <div className="muted-text">
                     Data nașterii:{" "}
                     {p.data_nasterii
-                      ? new Date(p.data_nasterii).toLocaleDateString()
+                      ? new Date(p.data_nasterii).toLocaleDateString("ro-RO")
                       : "-"}
                   </div>
 
@@ -890,8 +890,8 @@ function App() {
                         </div>
                         {booking.firstStart && booking.lastEnd && (
                           <div className="muted-text">
-                            {new Date(booking.firstStart).toLocaleString()} →{" "}
-                            {new Date(booking.lastEnd).toLocaleString()}
+                            {new Date(booking.firstStart).toLocaleString("ro-RO")} →{" "}
+                            {new Date(booking.lastEnd).toLocaleString("ro-RO")}
                           </div>
                         )}
                       </div>
@@ -935,8 +935,8 @@ function App() {
                             {segment.durata_minute} min • {segment.pret} lei
                           </div>
                           <div className="muted-text">
-                            {new Date(segment.data_start).toLocaleString()} →{" "}
-                            {new Date(segment.data_final).toLocaleString()}
+                            {new Date(segment.data_start).toLocaleString("ro-RO")} →{" "}
+                            {new Date(segment.data_final).toLocaleString("ro-RO")}
                           </div>
                         </div>
                       ))}
