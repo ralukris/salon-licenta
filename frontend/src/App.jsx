@@ -785,14 +785,16 @@ function App() {
                 required
               />
 
-              <label className="field-label">Data nașterii</label>
-              <input
+              <div>
+                <label className="field-label">Data nașterii</label>
+                <input
                 type="date"
                 value={editData}
                 max={today}
                 onChange={(e) => setEditData(e.target.value)}
                 required
-              />
+                />
+             </div>
 
               <div className="inline-actions">
                 <button type="submit" className="primary-btn">
@@ -844,6 +846,8 @@ function App() {
                 required
               />
 
+
+             <div>
               <label className="field-label">Data nașterii</label>
               <input
                 type="date"
@@ -852,6 +856,7 @@ function App() {
                 onChange={(e) => setNewData(e.target.value)}
                 required
               />
+              </div>
 
               <button type="submit" className="primary-btn">
                 Salvează profil
