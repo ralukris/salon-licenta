@@ -7,16 +7,19 @@ function authHeaders(token) {
   };
 }
 
-// ======================
-// LOCAȚII
-// ======================
+async function handleResponse(res) {
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data?.error || "Eroare server");
+  }
+  return data;
+}
 
 export async function getLocatii(token) {
   const res = await fetch(`${API_URL}/manager/locatii`, {
     headers: authHeaders(token),
   });
-
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function createLocatie(token, data) {
@@ -25,8 +28,7 @@ export async function createLocatie(token, data) {
     headers: authHeaders(token),
     body: JSON.stringify(data),
   });
-
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function updateLocatie(token, id, data) {
@@ -35,20 +37,14 @@ export async function updateLocatie(token, id, data) {
     headers: authHeaders(token),
     body: JSON.stringify(data),
   });
-
-  return res.json();
+  return handleResponse(res);
 }
-
-// ======================
-// ADMINISTRATORI
-// ======================
 
 export async function getAdministratori(token) {
   const res = await fetch(`${API_URL}/manager/administratori`, {
     headers: authHeaders(token),
   });
-
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function createAdministrator(token, data) {
@@ -57,8 +53,7 @@ export async function createAdministrator(token, data) {
     headers: authHeaders(token),
     body: JSON.stringify(data),
   });
-
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function updateAdministrator(token, id, data) {
@@ -67,8 +62,7 @@ export async function updateAdministrator(token, id, data) {
     headers: authHeaders(token),
     body: JSON.stringify(data),
   });
-
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function dezactiveazaAdministrator(token, id) {
@@ -79,6 +73,5 @@ export async function dezactiveazaAdministrator(token, id) {
       headers: authHeaders(token),
     }
   );
-
-  return res.json();
+  return handleResponse(res);
 }
