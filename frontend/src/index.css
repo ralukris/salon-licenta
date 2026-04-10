@@ -20,8 +20,8 @@
   --primary-hover: #b8935a;
   --danger: #ef4444;
   --danger-hover: #dc2626;
-  --secondary-bg: #eef2ff;
-  --secondary-text: #3730a3;
+  --secondary-bg: #fdf3e3;
+  --secondary-text: #b8935a;
   --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
   --shadow-soft: 0 6px 18px rgba(15, 23, 42, 0.06);
 }
@@ -322,7 +322,7 @@ p {
 .booking-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.1);
-  border-color: #c7d2fe;
+  border-color: #e8d5b0;
   background: #ffffff;
 }
 
@@ -432,7 +432,7 @@ p {
 .stock-qty {
   font-size: 18px;
   font-weight: 700;
-  color: #312e81;
+  color: #c9a96e;
   margin-top: 6px;
 }
 
