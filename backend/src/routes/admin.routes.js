@@ -392,6 +392,92 @@ router.patch("/admin/angajati/:id_angajat/inactiv", async (req, res) => {
   }
 });
 
+// GET servicii angajat
+router.get("/admin/angajati/:id_angajat/servicii", async (req, res) => {
+  const id_angajat = Number(req.params.id_angajat);
+  const id_locatie = req.user.id_locatie;
+
+  if (!Number.isInteger(id_angajat)) {
+    return res.status(400).json({ error: "id_angajat invalid" });
+  }
+
+  try {
+    const checkRes = await db.query(
+      `SELECT 1 FROM angajati WHERE id_angajat = $1 AND id_locatie = $2 LIMIT 1`,
+      [id_angajat, id_locatie]
+    );
+
+    if (checkRes.rows.length === 0) {
+      return res.status(404).json({ error: "Angajat inexistent sau fara acces" });
+    }
+
+    const result = await db.query(
+      `SELECT id_serviciu FROM angajat_servicii WHERE id_angajat = $1`,
+      [id_angajat]
+    );
+
+    return res.json(result.rows.map((r) => r.id_serviciu));
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Eroare la preluarea serviciilor angajatului" });
+  }
+});
+
+// POST servicii angajat (înlocuiește complet lista)
+router.post("/admin/angajati/:id_angajat/servicii", async (req, res) => {
+  const id_angajat = Number(req.params.id_angajat);
+  const id_locatie = req.user.id_locatie;
+  const { servicii } = req.body;
+
+  if (!Number.isInteger(id_angajat)) {
+    return res.status(400).json({ error: "id_angajat invalid" });
+  }
+
+  if (!Array.isArray(servicii)) {
+    return res.status(400).json({ error: "servicii trebuie sa fie un array" });
+  }
+
+  const client = await db.pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const checkRes = await client.query(
+      `SELECT 1 FROM angajati WHERE id_angajat = $1 AND id_locatie = $2 LIMIT 1`,
+      [id_angajat, id_locatie]
+    );
+
+    if (checkRes.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "Angajat inexistent sau fara acces" });
+    }
+
+    await client.query(
+      `DELETE FROM angajat_servicii WHERE id_angajat = $1`,
+      [id_angajat]
+    );
+
+    for (const id_serviciu of servicii) {
+      if (Number.isInteger(Number(id_serviciu))) {
+        await client.query(
+          `INSERT INTO angajat_servicii (id_angajat, id_serviciu) VALUES ($1, $2)`,
+          [id_angajat, Number(id_serviciu)]
+        );
+      }
+    }
+
+    await client.query("COMMIT");
+
+    return res.json({ message: "Servicii actualizate cu succes" });
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error(err);
+    return res.status(500).json({ error: "Eroare la actualizarea serviciilor angajatului" });
+  } finally {
+    client.release();
+  }
+});
+
 // 4.1) Lista servicii
 router.get("/admin/servicii", async (req, res) => {
   try {
