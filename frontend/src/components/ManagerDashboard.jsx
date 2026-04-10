@@ -357,88 +357,80 @@ function ManagerDashboard({ token, user, onLogout }) {
               {editingLocatieId ? "Editează locație" : "Adaugă locație"}
             </h3>
 
-            <form onSubmit={handleSaveLocatie} className="form-grid">
+        
+            <form onSubmit={handleSaveLocatie}>
+             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
               <input
-                type="text"
-                name="denumire"
-                placeholder="Denumire locație"
-                value={locatieForm.denumire}
-                onChange={handleLocatieFormChange}
-                required
+               type="text"
+              name="denumire"
+              placeholder="Denumire locație"
+              value={locatieForm.denumire}
+              onChange={handleLocatieFormChange}
+              required
               />
+             <input
+             type="text"
+             name="adresa"
+             placeholder="Adresă"
+             value={locatieForm.adresa}
+             onChange={handleLocatieFormChange}
+             required
+             />
+            <input
+            type="text"
+            name="telefon"
+            placeholder="Telefon"
+            value={locatieForm.telefon}
+            onChange={handleLocatieFormChange}
+            />
+           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+           <div>
+           <label className="field-label">Ora deschidere</label>
+           <input
+          type="time"
+          name="ora_deschidere"
+          value={locatieForm.ora_deschidere}
+          onChange={handleLocatieFormChange}
+          required
+          />
+      </div>
+      <div>
+        <label className="field-label">Ora închidere</label>
+        <input
+          type="time"
+          name="ora_inchidere"
+          value={locatieForm.ora_inchidere}
+          onChange={handleLocatieFormChange}
+          required
+        />
+      </div>
+    </div>
+  </div>
 
-              <input
-                type="text"
-                name="adresa"
-                placeholder="Adresă"
-                value={locatieForm.adresa}
-                onChange={handleLocatieFormChange}
-                required
-              />
+  {editingLocatieId && (
+    <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+      <input
+        type="checkbox"
+        name="activ"
+        checked={locatieForm.activ}
+        onChange={handleLocatieFormChange}
+      />
+      Locație activă
+    </label>
+  )}
 
-              <input
-                type="text"
-                name="telefon"
-                placeholder="Telefon"
-                value={locatieForm.telefon}
-                onChange={handleLocatieFormChange}
-              />
-
-              <label className="field-label">Ora deschidere</label>
-              <input
-                type="time"
-                name="ora_deschidere"
-                value={locatieForm.ora_deschidere}
-                onChange={handleLocatieFormChange}
-                required
-              />
-
-              <label className="field-label">Ora închidere</label>
-              <input
-                type="time"
-                name="ora_inchidere"
-                value={locatieForm.ora_inchidere}
-                onChange={handleLocatieFormChange}
-                required
-              />
-
-              {editingLocatieId && (
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    marginTop: 4,
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    name="activ"
-                    checked={locatieForm.activ}
-                    onChange={handleLocatieFormChange}
-                  />
-                  Locație activă
-                </label>
-              )}
-
-              <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                <button type="submit" className="primary-btn" disabled={loading}>
-                  {editingLocatieId ? "Salvează modificările" : "Adaugă locația"}
-                </button>
-
-                {editingLocatieId && (
-                  <button
-                    type="button"
-                    className="secondary-btn"
-                    onClick={resetLocatieForm}
-                  >
-                    Renunță
-                  </button>
-                )}
-              </div>
-            </form>
-          </div>
-
+  <div style={{ display: "flex", gap: 10 }}>
+    <button type="submit" className="primary-btn" disabled={loading}>
+      {editingLocatieId ? "Salvează modificările" : "Adaugă locația"}
+    </button>
+    {editingLocatieId && (
+      <button type="button" className="secondary-btn" onClick={resetLocatieForm}>
+        Renunță
+      </button>
+    )}
+  </div>
+           </form>
+           </div>
           <div className="panel">
             <h3 className="section-title">Lista locațiilor</h3>
 
@@ -488,119 +480,104 @@ function ManagerDashboard({ token, user, onLogout }) {
               {editingAdminId ? "Editează administrator" : "Adaugă administrator"}
             </h3>
 
-            <form onSubmit={handleSaveAdmin} className="form-grid">
+              <form onSubmit={handleSaveAdmin}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
               <input
-                type="text"
-                name="nume"
-                placeholder="Nume"
-                value={adminForm.nume}
-                onChange={handleAdminFormChange}
-                required
+              type="text"
+              name="nume"
+              placeholder="Nume"
+              value={adminForm.nume}
+              onChange={handleAdminFormChange}
+              required
               />
-
               <input
-                type="text"
-                name="prenume"
-                placeholder="Prenume"
-                value={adminForm.prenume}
-                onChange={handleAdminFormChange}
-                required
-              />
+             type="text"
+             name="prenume"
+             placeholder="Prenume"
+             value={adminForm.prenume}
+             onChange={handleAdminFormChange}
+             required
+            />
+           <input
+           type="email"
+           name="email"
+           placeholder="Email"
+           value={adminForm.email}
+           onChange={handleAdminFormChange}
+           required
+          />
+        <div className="password-field">
+       <input
+        type={showAdminPassword ? "text" : "password"}
+        name="parola"
+        placeholder={editingAdminId ? "Parolă nouă (opțional)" : "Parolă"}
+        value={adminForm.parola}
+        onChange={handleAdminFormChange}
+        required={!editingAdminId}
+      />
+      <button
+        type="button"
+        className="ghost-btn password-toggle"
+        onClick={() => setShowAdminPassword((prev) => !prev)}
+      >
+        {showAdminPassword ? "Ascunde" : "Arată"}
+      </button>
+    </div>
+    <div>
+      <label className="field-label">Rol</label>
+      <select
+        name="rol"
+        value={adminForm.rol}
+        onChange={handleAdminFormChange}
+        required
+      >
+        <option value="Receptie">Receptie</option>
+        <option value="ManagerGeneral">ManagerGeneral</option>
+      </select>
+    </div>
+    {adminForm.rol === "Receptie" && (
+      <div>
+        <label className="field-label">Locație</label>
+        <select
+          name="id_locatie"
+          value={adminForm.id_locatie}
+          onChange={handleAdminFormChange}
+          required
+        >
+          <option value="">Selectează locația</option>
+          {locatiiActive.map((locatie) => (
+            <option key={locatie.id_locatie} value={locatie.id_locatie}>
+              {locatie.denumire}
+            </option>
+          ))}
+        </select>
+      </div>
+    )}
+  </div>
 
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={adminForm.email}
-                onChange={handleAdminFormChange}
-                required
-              />
+  {editingAdminId && (
+    <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+      <input
+        type="checkbox"
+        name="activ"
+        checked={adminForm.activ}
+        onChange={handleAdminFormChange}
+      />
+      Administrator activ
+    </label>
+  )}
 
-              <div className="password-field">
-                 <input
-                 type={showAdminPassword ? "text" : "password"}
-                  name="parola"
-                  placeholder={editingAdminId ? "Parolă nouă (opțional)" : "Parolă"}
-                      value={adminForm.parola}
-                   onChange={handleAdminFormChange}
-                  required={!editingAdminId}
-                />
-                <button
-               type="button"
-              className="ghost-btn password-toggle"
-              onClick={() => setShowAdminPassword((prev) => !prev)}
-               >
-              {showAdminPassword ? "Ascunde" : "Arată"}
-               </button>
-               </div>
-
-              <label className="field-label">Rol</label>
-              <select
-                name="rol"
-                value={adminForm.rol}
-                onChange={handleAdminFormChange}
-                required
-              >
-                <option value="Receptie">Receptie</option>
-                <option value="ManagerGeneral">ManagerGeneral</option>
-              </select>
-
-              {adminForm.rol === "Receptie" && (
-                <>
-                  <label className="field-label">Locație</label>
-                  <select
-                    name="id_locatie"
-                    value={adminForm.id_locatie}
-                    onChange={handleAdminFormChange}
-                    required
-                  >
-                    <option value="">Selectează locația</option>
-                    {locatiiActive.map((locatie) => (
-                      <option key={locatie.id_locatie} value={locatie.id_locatie}>
-                        {locatie.denumire}
-                      </option>
-                    ))}
-                  </select>
-                </>
-              )}
-
-              {editingAdminId && (
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    marginTop: 4,
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    name="activ"
-                    checked={adminForm.activ}
-                    onChange={handleAdminFormChange}
-                  />
-                  Administrator activ
-                </label>
-              )}
-
-              <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                <button type="submit" className="primary-btn" disabled={loading}>
-                  {editingAdminId
-                    ? "Salvează modificările"
-                    : "Adaugă administrator"}
-                </button>
-
-                {editingAdminId && (
-                  <button
-                    type="button"
-                    className="secondary-btn"
-                    onClick={resetAdminForm}
-                  >
-                    Renunță
-                  </button>
-                )}
-              </div>
-            </form>
+  <div style={{ display: "flex", gap: 10 }}>
+    <button type="submit" className="primary-btn" disabled={loading}>
+      {editingAdminId ? "Salvează modificările" : "Adaugă administrator"}
+    </button>
+    {editingAdminId && (
+      <button type="button" className="secondary-btn" onClick={resetAdminForm}>
+        Renunță
+      </button>
+    )}
+  </div>
+</form>
           </div>
 
           <div className="panel">
