@@ -468,7 +468,10 @@ const renderFixedLogo = () => {
   return (
     <div
       style={{
-        padding: "18px 0 0 22px",
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        padding: "18px 0",
       }}
     >
       <img
@@ -477,7 +480,6 @@ const renderFixedLogo = () => {
         style={{
           width: "120px",
           height: "auto",
-          display: "block",
           opacity: 0.95,
         }}
       />
