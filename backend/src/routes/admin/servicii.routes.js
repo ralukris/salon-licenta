@@ -3,7 +3,7 @@ const db = require("../../config/db");
 
 const router = express.Router();
 
-// 1) Lista servicii
+//Lista servicii
 router.get("/", async (req, res) => {
   try {
     const result = await db.query(
@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 2) Adaugă serviciu
+//Adauga serviciu
 router.post("/", async (req, res) => {
   const { denumire_serviciu, pret, durata_minute } = req.body;
   if (!denumire_serviciu || pret === undefined || durata_minute === undefined) {
@@ -44,7 +44,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 3) Editează serviciu
+//Editeaza serviciu
 router.patch("/:id_serviciu", async (req, res) => {
   const id_serviciu = Number(req.params.id_serviciu);
   const { denumire_serviciu, pret, durata_minute } = req.body;
@@ -72,7 +72,7 @@ router.patch("/:id_serviciu", async (req, res) => {
   }
 });
 
-// 4) Dezactivează serviciu
+//Dezactiveaza serviciu
 router.patch("/:id_serviciu/dezactiveaza", async (req, res) => {
   const id_serviciu = Number(req.params.id_serviciu);
   if (!Number.isInteger(id_serviciu)) return res.status(400).json({ error: "id_serviciu invalid" });
@@ -90,7 +90,7 @@ router.patch("/:id_serviciu/dezactiveaza", async (req, res) => {
   }
 });
 
-// 5) Reactivează serviciu
+//Reactiveaza serviciu
 router.patch("/:id_serviciu/activeaza", async (req, res) => {
   const id_serviciu = Number(req.params.id_serviciu);
   if (!Number.isInteger(id_serviciu)) return res.status(400).json({ error: "id_serviciu invalid" });

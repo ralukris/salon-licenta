@@ -34,7 +34,7 @@ async function hasUnavailabilityOverlap(client, id_angajat, id_locatie, data_sta
   return result.rows.length > 0;
 }
 
-// 1) Lista indisponibilități angajat
+//Lista indisponibilitati angajat
 router.get("/angajati/:id_angajat", async (req, res) => {
   const id_angajat = Number(req.params.id_angajat);
   const id_locatie = req.user.id_locatie;
@@ -63,7 +63,7 @@ router.get("/angajati/:id_angajat", async (req, res) => {
   }
 });
 
-// 2) Adaugă indisponibilitate
+//Adauga indisponibilitate
 router.post("/", async (req, res) => {
   const { id_angajat, data_start, data_final, tip, motiv } = req.body;
   const id_locatie = req.user.id_locatie;
@@ -144,7 +144,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 3) Șterge indisponibilitate
+//Sterge indisponibilitate
 router.delete("/:id", async (req, res) => {
   const id = Number(req.params.id);
   const id_locatie = req.user.id_locatie;

@@ -3,7 +3,7 @@ const db = require("../../config/db");
 
 const router = express.Router();
 
-// 1) Emite chitanță
+//Emite chitanta
 router.post("/", async (req, res) => {
   const { id_programare } = req.body;
   const id_locatie = req.user.id_locatie;
@@ -49,7 +49,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 2) Chitanțe disponibile pentru plată
+//Chitante disponibile pentru plata
 router.get("/disponibile-plata", async (req, res) => {
   const id_locatie = req.user.id_locatie;
   try {
@@ -71,7 +71,7 @@ router.get("/disponibile-plata", async (req, res) => {
   }
 });
 
-// 3) Istoric chitanțe
+//Istoric chitante
 router.get("/istoric", async (req, res) => {
   const id_locatie = req.user.id_locatie;
   try {

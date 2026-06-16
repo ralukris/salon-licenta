@@ -15,9 +15,7 @@ const transporter = nodemailer.createTransport({
 
 const router = express.Router();
 
-// ======================
-// ADMIN LOGIN
-// ======================
+//Logare Admin
 router.post("/auth/admin/login", async (req, res) => {
   const { email, parola } = req.body;
 
@@ -87,9 +85,7 @@ router.post("/auth/admin/login", async (req, res) => {
   }
 });
 
-// ======================
-// CLIENT LOGIN
-// ======================
+//Logare client
 router.post("/auth/client/login", async (req, res) => {
   const { identificator, parola } = req.body;
 
@@ -153,9 +149,7 @@ router.post("/auth/client/login", async (req, res) => {
   }
 });
 
-// ======================
-// CLIENT REGISTER
-// ======================
+//Creare cont client
 router.post("/auth/client/register", async (req, res) => {
   const { telefon, email, parola, nume, prenume, data_nasterii } = req.body;
 
@@ -330,9 +324,7 @@ router.post("/auth/client/register", async (req, res) => {
   }
 });
 
-// ======================
-// FORGOT PASSWORD
-// ======================
+//Uitare parola client
 router.post("/auth/forgot-password", async (req, res) => {
   const { email } = req.body;
 
@@ -416,9 +408,7 @@ return res.json({
   }
 });
 
-// ======================
-// RESET PASSWORD
-// ======================
+//Resetare parola client
 router.post("/auth/reset-password", async (req, res) => {
   const { token, password } = req.body;
 

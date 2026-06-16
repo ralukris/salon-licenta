@@ -5,9 +5,7 @@ const { createBooking } = require("../services/booking.service");
 
 const router = express.Router();
 
-// ======================
-// GET profiluri (toate persoanele din cont)
-// ======================
+//Profiluri (toate persoanele din cont)
 router.get("/client/profiles", requireAuth, async (req, res) => {
   try {
     const id_cont = req.user.id_cont;
@@ -34,9 +32,7 @@ router.get("/client/profiles", requireAuth, async (req, res) => {
   }
 });
 
-// ======================
-// CREATE profil nou
-// ======================
+// Creare profil nou
 router.post("/client/profiles", requireAuth, async (req, res) => {
   const { nume, prenume, data_nasterii } = req.body;
 
@@ -86,9 +82,7 @@ router.post("/client/profiles", requireAuth, async (req, res) => {
   }
 });
 
-// ======================
-// UPDATE profil existent (doar din contul clientului logat)
-// ======================
+//Actualizare profil existent (doar din contul clientului logat)
 router.patch("/client/profiles/:id_client", requireAuth, async (req, res) => {
   const id_client = Number(req.params.id_client);
   const { nume, prenume, data_nasterii } = req.body;
@@ -147,10 +141,8 @@ router.patch("/client/profiles/:id_client", requireAuth, async (req, res) => {
   }
 });
 
-// ======================
-// GET programări client
+//Programări client
 // 1 rând = 1 segment din programare
-// ======================
 router.get("/client/programari", requireAuth, async (req, res) => {
   try {
     const id_cont = req.user.id_cont;
@@ -199,10 +191,8 @@ router.get("/client/programari", requireAuth, async (req, res) => {
   }
 });
 
-// ======================
-// POST programări (creare)
+//Programari (creare)
 // suportă mai multe segmente
-// ======================
 router.post("/client/programari", requireAuth, async (req, res) => {
   const { id_client, id_locatie, observatii, segmente } = req.body;
 
@@ -366,9 +356,7 @@ router.post("/client/programari", requireAuth, async (req, res) => {
   }
 });
 
-// ======================
-// CANCEL programare (client)
-// ======================
+// Anulare programare (client)
 router.patch("/client/programari/:id_programare/anulare", requireAuth, async (req, res) => {
   try {
     const id_cont = req.user.id_cont;

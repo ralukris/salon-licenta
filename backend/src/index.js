@@ -24,12 +24,12 @@ app.use(
 
 app.use(express.json());
 
-// 🔹 Test API
+//Test API
 app.get("/", (req, res) => {
   res.json({ message: "API Salon funcționează" });
 });
 
-// 🔹 Test conexiune DB
+//Test conexiune DB
 app.get("/health", async (req, res) => {
   try {
     await db.query("SELECT 1");
@@ -40,7 +40,7 @@ app.get("/health", async (req, res) => {
   }
 });
 
-// 🔹 Montare rute
+//Montare rute
 app.use(publicRoutes);
 app.use(authRoutes);
 app.use(clientRoutes);

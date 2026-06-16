@@ -309,10 +309,7 @@ async function getAvailableSlotsForSegments({
   return slots;
 }
 
-/**
- * Creează o programare + segmentele aferente într-o tranzacție.
- * segmente = [{ id_serviciu, id_angajat, data_start }]
- */
+//Creeaza o programare + segmentele aferente intr-o tranzactie
 async function createBooking({ id_client, id_locatie, observatii, segmente }) {
   if (!id_client || !id_locatie) {
     throw new Error("Lipsesc id_client sau id_locatie");

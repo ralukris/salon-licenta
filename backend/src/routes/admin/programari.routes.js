@@ -4,7 +4,7 @@ const { createBooking, getAvailableSlotsForSegments } = require("../../services/
 
 const router = express.Router();
 
-// 1) Lista programări
+//Lista programari
 router.get("/", async (req, res) => {
   const id_locatie = req.user.id_locatie;
   try {
@@ -36,7 +36,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 2) Sloturi disponibile multiple
+//Sloturi disponibile multiple
 router.post("/sloturi-disponibile-multiple", async (req, res) => {
   const id_locatie = req.user.id_locatie;
   const { data, segmente } = req.body;
@@ -66,7 +66,7 @@ router.post("/sloturi-disponibile-multiple", async (req, res) => {
   }
 });
 
-// 3) Adăugare programare manuală
+//Adaugare programare manuala
 router.post("/manual", async (req, res) => {
   const id_locatie = req.user.id_locatie;
   const { id_client, observatii, segmente, id_serviciu, id_angajat, data_start } = req.body;
@@ -156,7 +156,7 @@ router.post("/manual", async (req, res) => {
   }
 });
 
-// 4) Anulează programare
+//Anuleaza programare
 router.patch("/:id_programare/anulare", async (req, res) => {
   const id_programare = Number(req.params.id_programare);
   const id_locatie = req.user.id_locatie;
@@ -190,7 +190,7 @@ router.patch("/:id_programare/anulare", async (req, res) => {
   }
 });
 
-// 5) Finalizează programare
+//Finalizeaza programare
 router.patch("/:id_programare/finalizeaza", async (req, res) => {
   const id_programare = Number(req.params.id_programare);
   const id_locatie = req.user.id_locatie;

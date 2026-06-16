@@ -29,7 +29,7 @@ function buildDateTime(dateString, timeValue) {
   return new Date(`${dateString}T${cleanTime}`);
 }
 
-// 1) Lista locații active
+//Lista locatii active
 router.get("/public/locatii", async (req, res) => {
   try {
     const result = await db.query(
@@ -48,7 +48,7 @@ router.get("/public/locatii", async (req, res) => {
   }
 });
 
-// 2) Lista servicii active
+//Lista servicii active
 router.get("/public/servicii", async (req, res) => {
   try {
     const result = await db.query(
@@ -67,7 +67,7 @@ router.get("/public/servicii", async (req, res) => {
   }
 });
 
-// 3) Angajați care pot executa un serviciu într-o locație
+//Angajati care pot executa un serviciu într-o locatie
 router.get("/public/locatii/:id_locatie/servicii/:id_serviciu/angajati", async (req, res) => {
   const id_locatie = Number(req.params.id_locatie);
   const id_serviciu = Number(req.params.id_serviciu);
@@ -101,7 +101,7 @@ router.get("/public/locatii/:id_locatie/servicii/:id_serviciu/angajati", async (
   }
 });
 
-// 4) Verificare disponibilitate completă pentru un interval
+//Verificare disponibilitate completa pentru un interval
 router.post("/public/disponibilitate", async (req, res) => {
   const { id_angajat, data_start, data_final } = req.body;
 
@@ -125,7 +125,7 @@ router.post("/public/disponibilitate", async (req, res) => {
   }
 });
 
-// 5) Sloturi disponibile pentru un angajat + serviciu + dată
+//Sloturi disponibile pentru un angajat + serviciu + data
 router.get("/public/sloturi-disponibile", async (req, res) => {
   const id_angajat = Number(req.query.id_angajat);
   const id_serviciu = Number(req.query.id_serviciu);
@@ -254,8 +254,8 @@ router.get("/public/sloturi-disponibile", async (req, res) => {
   }
 });
 
-// 6) Sloturi generale pentru un serviciu într-o locație și într-o zi
-// Returnează intervalele + angajații disponibili pe fiecare interval
+//Sloturi generale pentru un serviciu intr-o locatie si intr-o zi
+// Returnează intervalele + angajatii disponibili pe fiecare interval
 router.get("/public/sloturi-disponibile-generale", async (req, res) => {
   const id_locatie = Number(req.query.id_locatie);
   const id_serviciu = Number(req.query.id_serviciu);
@@ -404,7 +404,7 @@ router.get("/public/sloturi-disponibile-generale", async (req, res) => {
   }
 });
 
-// 7) Sloturi disponibile pentru mai multe servicii consecutive
+//Sloturi disponibile pentru mai multe servicii consecutive
 router.post("/public/sloturi-disponibile-multiple", async (req, res) => {
   const { id_locatie, data, segmente } = req.body;
 

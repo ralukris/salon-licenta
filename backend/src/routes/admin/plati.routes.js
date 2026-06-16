@@ -3,7 +3,7 @@ const db = require("../../config/db");
 
 const router = express.Router();
 
-// 1) Înregistrează plată
+//Inregistreaza plata
 router.post("/", async (req, res) => {
   const { nr_chitanta, tip_plata } = req.body;
   const id_locatie = req.user.id_locatie;

@@ -13,7 +13,7 @@ function isFutureDateOnly(value) {
   return inputDate > today;
 }
 
-// 1) Lista angajați
+//Lista angajati
 router.get("/", async (req, res) => {
   const id_locatie = req.user.id_locatie;
   try {
@@ -30,7 +30,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 2) Adaugă angajat
+//Adauga angajat
 router.post("/", async (req, res) => {
   const id_locatie = req.user.id_locatie;
   const { nume, prenume, telefon, email, specializare, salariu, data_start_program, data_nastere } = req.body;
@@ -67,7 +67,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 3) Editează angajat
+//Editeaza angajat
 router.patch("/:id_angajat", async (req, res) => {
   const id_angajat = Number(req.params.id_angajat);
   const id_locatie = req.user.id_locatie;
@@ -103,7 +103,7 @@ router.patch("/:id_angajat", async (req, res) => {
   }
 });
 
-// 4) Setează angajat inactiv
+//Seteaza angajat inactiv
 router.patch("/:id_angajat/inactiv", async (req, res) => {
   const id_angajat = Number(req.params.id_angajat);
   const id_locatie = req.user.id_locatie;
@@ -122,7 +122,7 @@ router.patch("/:id_angajat/inactiv", async (req, res) => {
   }
 });
 
-// 4.1) Reactivează angajat
+//Reactiveaza angajat
 router.patch("/:id_angajat/activ", async (req, res) => {
   const id_angajat = Number(req.params.id_angajat);
   const id_locatie = req.user.id_locatie;
@@ -141,7 +141,7 @@ router.patch("/:id_angajat/activ", async (req, res) => {
   }
 });
 
-// 4.2) Servicii angajat - GET
+//Servicii angajat
 router.get("/:id_angajat/servicii", async (req, res) => {
   const id_angajat = Number(req.params.id_angajat);
   const id_locatie = req.user.id_locatie;
@@ -163,7 +163,7 @@ router.get("/:id_angajat/servicii", async (req, res) => {
   }
 });
 
-// 4.3) Servicii angajat - POST
+// Servicii angajat
 router.post("/:id_angajat/servicii", async (req, res) => {
   const id_angajat = Number(req.params.id_angajat);
   const id_locatie = req.user.id_locatie;

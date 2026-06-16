@@ -13,7 +13,7 @@ function isFutureDateOnly(value) {
   return inputDate > today;
 }
 
-// 1) Căutare clienți
+//Cautare clienti
 router.get("/search", async (req, res) => {
   const q = String(req.query.q || "").trim();
   if (!q) return res.json([]);
@@ -55,7 +55,7 @@ router.get("/search", async (req, res) => {
   }
 });
 
-// 2) Lista toți clienții
+//Lista toți clientii
 router.get("/", async (req, res) => {
   try {
     const result = await db.query(
@@ -71,7 +71,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 3) Adaugă client
+//Adauga client
 router.post("/", async (req, res) => {
   const { nume, prenume, telefon, data_nasterii } = req.body;
   if (!nume || !prenume || !telefon || !data_nasterii) {
@@ -117,7 +117,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 4) Editează client
+//Editeaza client
 router.patch("/:id_client", async (req, res) => {
   const id_client = Number(req.params.id_client);
   const { nume, prenume, telefon, data_nasterii, email } = req.body;

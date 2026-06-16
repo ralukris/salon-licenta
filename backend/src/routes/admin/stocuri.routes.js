@@ -3,7 +3,7 @@ const db = require("../../config/db");
 
 const router = express.Router();
 
-// 1) Lista stocuri
+//Lista stocuri
 router.get("/", async (req, res) => {
   const id_locatie = req.user.id_locatie;
   try {
@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// 2) Adaugă produs + stoc
+//Adauga produs + stoc
 router.post("/", async (req, res) => {
   const id_locatie = req.user.id_locatie;
   const { denumire_produs, unitate_masura, cantitate } = req.body;
@@ -62,7 +62,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// 3) Editare stoc
+//Editare stoc
 router.patch("/:id_stoc", async (req, res) => {
   const id_stoc = Number(req.params.id_stoc);
   const id_locatie = req.user.id_locatie;
@@ -87,7 +87,7 @@ router.patch("/:id_stoc", async (req, res) => {
   }
 });
 
-// 4) Dezactivare produs
+//Dezactivare produs
 router.patch("/:id_produs/dezactiveaza", async (req, res) => {
   const id_produs = Number(req.params.id_produs);
   const id_locatie = req.user.id_locatie;
@@ -114,7 +114,7 @@ router.patch("/:id_produs/dezactiveaza", async (req, res) => {
   }
 });
 
-// 5) Reactivare produs
+//Reactivare produs
 router.patch("/:id_produs/activeaza", async (req, res) => {
   const id_produs = Number(req.params.id_produs);
   const id_locatie = req.user.id_locatie;

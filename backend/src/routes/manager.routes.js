@@ -21,11 +21,7 @@ function normalizeBoolean(value, defaultValue = true) {
   return typeof value === "boolean" ? value : defaultValue;
 }
 
-// ======================
-// LOCAȚII
-// ======================
-
-// 1) Listă locații
+//Lista locatii
 router.get("/manager/locatii", async (req, res) => {
   try {
     const result = await db.query(
@@ -50,7 +46,7 @@ router.get("/manager/locatii", async (req, res) => {
   }
 });
 
-// 2) Adaugă locație
+//Adaugs locatie
 router.post("/manager/locatii", async (req, res) => {
   const { denumire, adresa, telefon, ora_deschidere, ora_inchidere } = req.body;
 
@@ -111,7 +107,7 @@ router.post("/manager/locatii", async (req, res) => {
   }
 });
 
-// 3) Editează locație
+//Editeaza locatie
 router.patch("/manager/locatii/:id_locatie", async (req, res) => {
   const id_locatie = Number(req.params.id_locatie);
   const { denumire, adresa, telefon, activ, ora_deschidere, ora_inchidere } =
@@ -189,11 +185,7 @@ router.patch("/manager/locatii/:id_locatie", async (req, res) => {
   }
 });
 
-// ======================
-// ADMINISTRATORI
-// ======================
-
-// 4) Listă administratori
+//Lista administratori
 router.get("/manager/administratori", async (req, res) => {
   try {
     const result = await db.query(
@@ -222,7 +214,7 @@ router.get("/manager/administratori", async (req, res) => {
   }
 });
 
-// 5) Adaugă administrator
+//Adauga administrator
 router.post("/manager/administratori", async (req, res) => {
   const { id_locatie, nume, prenume, email, parola, rol } = req.body;
 
@@ -315,7 +307,7 @@ router.post("/manager/administratori", async (req, res) => {
   }
 });
 
-// 6) Editează administrator
+//Editeaza administrator
 router.patch("/manager/administratori/:id_administrator", async (req, res) => {
   const id_administrator = Number(req.params.id_administrator);
   const { id_locatie, nume, prenume, email, rol, activ, parola } = req.body;
@@ -471,7 +463,7 @@ if (parola && String(parola).length >= 6) {
   }
 });
 
-// 7) Dezactivează administrator
+//Dezactiveaza administrator
 router.patch(
   "/manager/administratori/:id_administrator/dezactiveaza",
   async (req, res) => {
