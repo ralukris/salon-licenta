@@ -116,7 +116,7 @@ p {
   min-height: 100vh;
 }
 
-/* Login / shell */
+/* Logare */
 .app-shell {
   width: 100%;
   min-height: 100vh;
@@ -188,7 +188,7 @@ p {
   line-height: 1.55;
 }
 
-/* Messages */
+/* Mesaje */
 .message {
   margin-top: 14px;
   margin-bottom: 18px;
@@ -216,7 +216,7 @@ p {
   border-color: #fecaca;
 }
 
-/* Buttons */
+/* Butoane */
 .primary-btn {
   background: linear-gradient(135deg, #c9a96e 0%, #b8935a 100%);
   color: #ffffff;
@@ -257,7 +257,7 @@ p {
   border: 1px solid #e8d5b0;
 }
 
-/* Layout helpers */
+/* Layout de ajt */
 .form-grid {
   display: grid;
   gap: 14px;
@@ -281,7 +281,7 @@ p {
   margin-top: 24px;
 }
 
-/* Admin tabs */
+/* Tab-uri admin */
 .admin-tabs {
   display: flex;
   gap: 10px;
@@ -292,7 +292,7 @@ p {
   min-width: 120px;
 }
 
-/* Lists */
+/* Liste */
 .profiles-list,
 .bookings-list {
   display: flex;
@@ -301,7 +301,7 @@ p {
   margin-top: 18px;
 }
 
-/* Cards */
+/* Celule */
 .profile-item,
 .booking-item {
   display: block;
@@ -346,7 +346,7 @@ p {
   margin-bottom: 0;
 }
 
-/* Booking internals */
+/* Rezervare interna */
 .booking-item {
   background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
 }
@@ -408,7 +408,7 @@ p {
   color: #0f172a;
 }
 
-/* Stock */
+/* Stoc */
 .stock-grid {
   display: grid;
   gap: 16px;
@@ -470,7 +470,7 @@ p {
   color: #b91c1c;
 }
 
-/* Password field */
+/* Parola */
 .password-field {
   display: flex;
   gap: 10px;
@@ -486,7 +486,7 @@ p {
   min-height: 46px;
 }
 
-/* Utilities */
+/* Utilitati */
 .soft-divider {
   height: 1px;
   background: #e5e7eb;
@@ -510,7 +510,7 @@ input[type="password"] {
   min-height: 46px;
 }
 
-/* Hide browser native password reveal */
+/* Ascunde parola */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
@@ -521,7 +521,6 @@ input[type="password"]::-webkit-password-toggle-button {
   display: none;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .app-shell {
     padding: 20px 14px;

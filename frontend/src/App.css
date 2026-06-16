@@ -173,7 +173,7 @@ textarea:focus {
   color: #991b1b;
 }
 
-/* Liste și delimitare vizuală clară */
+/* Liste si delimitare vizuală clara */
 .profiles-list,
 .bookings-list {
   display: flex;
@@ -247,7 +247,7 @@ textarea:focus {
   margin-top: 24px;
 }
 
-/* Admin tabs */
+/* Tab-uri Admin */
 .admin-tabs {
   display: flex;
   gap: 10px;
@@ -258,7 +258,7 @@ textarea:focus {
   min-width: 120px;
 }
 
-/* Small stat cards */
+/* Celule mici */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -286,7 +286,7 @@ textarea:focus {
   color: #111827;
 }
 
-/* Better spacing inside cards */
+/* Spatii bune intre celule*/
 .booking-meta,
 .profile-meta {
   display: grid;
@@ -294,7 +294,7 @@ textarea:focus {
   margin-top: 10px;
 }
 
-/* Booking grouped card styling */
+/* Celule grupate rezervare */
 .booking-item {
   background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
 }
@@ -330,7 +330,7 @@ textarea:focus {
   margin-top: 14px;
 }
 
-/* Stock cards */
+/* celule stoc */
 .stock-grid {
   display: grid;
   gap: 20px;
@@ -368,7 +368,7 @@ textarea:focus {
   margin-bottom: 6px;
 }
 
-/* Make selects and inputs feel consistent */
+/* Selectare si adaugare */
 select,
 input[type="date"],
 input[type="datetime-local"],
@@ -379,7 +379,7 @@ input[type="password"] {
   min-height: 46px;
 }
 
-/* Optional badge style */
+/* stil optional */
 .status-badge {
   display: inline-block;
   padding: 5px 10px;
@@ -404,7 +404,7 @@ input[type="password"] {
   color: #b91c1c;
 }
 
-/* Password field */
+/* parola */
 .password-field {
   display: flex;
   gap: 10px;
@@ -420,7 +420,7 @@ input[type="password"] {
   min-height: 46px;
 }
 
-/* Hide browser native password reveal */
+/* Ascunde parola */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
@@ -431,7 +431,7 @@ input[type="password"]::-webkit-password-toggle-button {
   display: none;
 }
 
-/* Nice utility classes */
+/*clase utile */
 .soft-divider {
   height: 1px;
   background: #e5e7eb;
@@ -445,7 +445,7 @@ input[type="password"]::-webkit-password-toggle-button {
   flex-wrap: wrap;
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .app-shell {
     padding: 20px 14px;
