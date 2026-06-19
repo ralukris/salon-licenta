@@ -78,9 +78,9 @@ function App() {
         body: JSON.stringify({ identificator, parola }),
       });
       const data = await res.json();
-      if (!res.ok) { setMessage(data.error || "Eroare la login client"); return; }
+      if (!res.ok) { setMessage(data.error || "Eroare la autentificare client"); return; }
       persistSession(data);
-      setMessage("Login client reușit.");
+      setMessage("Autentificare client reușită.");
     } catch { setMessage("Eroare de conexiune cu serverul."); }
   };
 
@@ -95,9 +95,9 @@ function App() {
         body: JSON.stringify({ email: adminEmail, parola: adminParola }),
       });
       const data = await res.json();
-      if (!res.ok) { setMessage(data.error || "Eroare la login admin"); return; }
+      if (!res.ok) { setMessage(data.error || "Eroare la autentificare administrator"); return; }
       persistSession(data);
-      setMessage("Login administrator reușit.");
+      setMessage("Autentificare administrator reușită.");
     } catch { setMessage("Eroare de conexiune cu serverul."); }
   };
 
@@ -203,9 +203,9 @@ function App() {
           style={{ width: authView === "client-register" ? "min(760px, 92vw)" : undefined }}
         >
           <h2>
-            {authView === "client-login" ? "Login client"
+            {authView === "client-login" ? "Autentificare client"
               : authView === "client-register" ? "Creează cont client"
-              : "Login administrator"}
+              : "Autentificare administrator"}
           </h2>
 
           <div className="auth-switch">
