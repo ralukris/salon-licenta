@@ -241,7 +241,7 @@ function App() {
               <div style={{ marginTop: -4 }}>
                 <Link className="muted-text" to="/forgot-password">Ai uitat parola?</Link>
               </div>
-              <button type="submit" className="primary-btn">Login client</button>
+              <button type="submit" className="primary-btn">Autentificare client</button>
             </form>
           )}
 
@@ -295,7 +295,7 @@ function App() {
                   {showAdminPassword ? "Ascunde" : "Arată"}
                 </button>
               </div>
-              <button type="submit" className="primary-btn">Login admin</button>
+              <button type="submit" className="primary-btn">Autentificare administrator</button>
             </form>
           )}
 

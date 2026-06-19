@@ -459,7 +459,7 @@ function AdminDashboard({ token, user, onLogout }) {
 
       <div className="topbar">
         <div>
-          <h2>Dashboard Admin</h2>
+          <h2>Gestionare salon</h2>
           <div className="muted-text">
             {user?.email || "Administrator"} {user?.rol ? `• ${user.rol}` : ""}
           </div>

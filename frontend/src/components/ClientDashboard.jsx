@@ -128,7 +128,7 @@ function ClientDashboard({ token, user, profiles, programari, onLogout, onFetchC
     <div>
       <div className="topbar" style={{ marginBottom: "16px", marginTop: "0px" }}>
         <div>
-          <h2>Dashboard Client</h2>
+          <h2>Pagina mea</h2>
           {user?.email && <div className="muted-text">{user.email}</div>}
         </div>
         <button className="danger-btn" onClick={onLogout}>Logout</button>
