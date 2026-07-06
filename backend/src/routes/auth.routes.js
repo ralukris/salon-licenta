@@ -3,22 +3,31 @@ const db = require("../config/db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const dns = require("dns");
 const nodemailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  requireTLS: true,
-  family: 4,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-});
+// nodemailer rezolva singur atat adrese IPv4 cat si IPv6 pentru host si alege
+// una la intamplare; pe Render conexiunea IPv6 catre Gmail nu functioneaza.
+// Rezolvam noi IPv4 explicit (dns.lookup respecta strict family:4) ca sa evitam
+// alegerea aleatorie a unei adrese IPv6 nefunctionale.
+async function getGmailTransporter() {
+  const { address } = await dns.promises.lookup("smtp.gmail.com", { family: 4 });
+
+  return nodemailer.createTransport({
+    host: address,
+    port: 587,
+    secure: false,
+    requireTLS: true,
+    tls: { servername: "smtp.gmail.com" },
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
+  });
+}
 
 const router = express.Router();
 
@@ -376,6 +385,8 @@ router.post("/auth/forgot-password", async (req, res) => {
     );
 
     const resetLink = `https://salon-licenta.vercel.app/reset-password/${resetToken}`;
+
+    const transporter = await getGmailTransporter();
 
     await transporter.sendMail({
       from: `"Raluca's Beauty Salon" <${process.env.GMAIL_USER}>`,
