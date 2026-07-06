@@ -6,7 +6,7 @@ import {
   issueReceipt,
   createManualBooking,
   getMultipleAvailableSlots,
-  getEmployeesForService,
+  getAvailableEmployeesForDate,
 } from "../services/adminApi";
 
 export function useBookings(token, user, services, employees) {
@@ -185,15 +185,15 @@ export function useBookings(token, user, services, employees) {
     setManualBookingEmployees([]);
   };
 
-  const fetchManualBookingEmployees = async (id_serviciu) => {
-    if (!id_serviciu || !user?.id_locatie) {
+  const fetchManualBookingEmployees = async (id_serviciu, data) => {
+    if (!id_serviciu || !data || !user?.id_locatie) {
       setManualBookingEmployees([]);
       return;
     }
     setLoadingManualBookingEmployees(true);
     try {
-      const data = await getEmployeesForService(user.id_locatie, id_serviciu);
-      setManualBookingEmployees(data);
+      const employees = await getAvailableEmployeesForDate(user.id_locatie, id_serviciu, data);
+      setManualBookingEmployees(employees);
     } finally {
       setLoadingManualBookingEmployees(false);
     }

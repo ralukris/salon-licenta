@@ -67,40 +67,6 @@ router.get("/public/servicii", async (req, res) => {
   }
 });
 
-//Angajati care pot executa un serviciu într-o locatie
-router.get("/public/locatii/:id_locatie/servicii/:id_serviciu/angajati", async (req, res) => {
-  const id_locatie = Number(req.params.id_locatie);
-  const id_serviciu = Number(req.params.id_serviciu);
-
-  if (!Number.isInteger(id_locatie) || !Number.isInteger(id_serviciu)) {
-    return res.status(400).json({ error: "Parametri invalizi" });
-  }
-
-  try {
-    const result = await db.query(
-      `
-      SELECT a.id_angajat, a.nume, a.prenume, a.specializare
-      FROM angajati a
-      INNER JOIN angajat_servicii asv ON asv.id_angajat = a.id_angajat
-      INNER JOIN locatii l ON l.id_locatie = a.id_locatie
-      INNER JOIN servicii s ON s.id_serviciu = asv.id_serviciu
-      WHERE a.activ = true
-        AND l.activ = true
-        AND s.activ = true
-        AND a.id_locatie = $1
-        AND asv.id_serviciu = $2
-      ORDER BY a.nume ASC, a.prenume ASC
-      `,
-      [id_locatie, id_serviciu]
-    );
-
-    return res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Eroare la preluarea angajaților" });
-  }
-});
-
 //Verificare disponibilitate completa pentru un interval
 router.post("/public/disponibilitate", async (req, res) => {
   const { id_angajat, data_start, data_final } = req.body;
