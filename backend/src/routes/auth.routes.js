@@ -325,8 +325,6 @@ router.post("/auth/client/register", async (req, res) => {
 });
 
 //Uitare parola client
-const nodemailer = require("nodemailer");
-
 router.post("/auth/forgot-password", async (req, res) => {
   const { email } = req.body;
 
