@@ -145,18 +145,27 @@ export async function searchClients(token, query, signal) {
   return Array.isArray(data) ? data : [];
 }
 
-export async function getEmployeesForService(locationId, serviceId) {
+export async function getAvailableEmployeesForDate(locationId, serviceId, data) {
   const res = await fetch(
-    `${API_BASE}/public/locatii/${locationId}/servicii/${serviceId}/angajati`
+    `${API_BASE}/public/sloturi-disponibile-generale?id_locatie=${locationId}&id_serviciu=${serviceId}&data=${data}`
   );
 
-  const data = await parseJsonSafe(res);
+  const slots = await parseJsonSafe(res);
 
   if (!res.ok) {
-    throw new Error("Eroare la încărcarea angajaților pentru serviciu.");
+    throw new Error("Eroare la încărcarea angajaților disponibili.");
   }
 
-  return Array.isArray(data) ? data : [];
+  const uniqueEmployeesMap = new Map();
+  for (const slot of Array.isArray(slots) ? slots : []) {
+    for (const emp of Array.isArray(slot.angajati) ? slot.angajati : []) {
+      if (!uniqueEmployeesMap.has(emp.id_angajat)) {
+        uniqueEmployeesMap.set(emp.id_angajat, emp);
+      }
+    }
+  }
+
+  return Array.from(uniqueEmployeesMap.values());
 }
 
 export async function getMultipleAvailableSlots(token, payload) {

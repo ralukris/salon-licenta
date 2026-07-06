@@ -202,8 +202,8 @@ function AdminDashboard({ token, user, onLogout }) {
   }, [bookingsHook.manualClientSearch, token]);
 
   useEffect(() => {
-    bookingsHook.fetchManualBookingEmployees(bookingsHook.manualBooking.id_serviciu);
-  }, [bookingsHook.manualBooking.id_serviciu]);
+    bookingsHook.fetchManualBookingEmployees(bookingsHook.manualBooking.id_serviciu, bookingsHook.manualBooking.data);
+  }, [bookingsHook.manualBooking.id_serviciu, bookingsHook.manualBooking.data]);
 
   useEffect(() => {
     bookingsHook.setManualBooking((prev) => ({ ...prev, id_angajat: "" }));
