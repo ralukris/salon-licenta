@@ -31,6 +31,33 @@ async function getGmailTransporter() {
 
 const router = express.Router();
 
+// Endpoint temporar de diagnostic - testeaza conectivitatea SMTP pe mai multe
+// porturi ca sa identificam daca vreunul e permis din reteaua serverului.
+router.get("/auth/_debug-smtp", async (req, res) => {
+  const net = require("net");
+  const { address } = await dns.promises.lookup("smtp.gmail.com", { family: 4 });
+
+  const testPort = (port) =>
+    new Promise((resolve) => {
+      const start = Date.now();
+      const socket = net.createConnection({ host: address, port, timeout: 8000 });
+      socket.on("connect", () => {
+        socket.destroy();
+        resolve({ port, ok: true, ms: Date.now() - start });
+      });
+      socket.on("timeout", () => {
+        socket.destroy();
+        resolve({ port, ok: false, error: "timeout", ms: Date.now() - start });
+      });
+      socket.on("error", (err) => {
+        resolve({ port, ok: false, error: err.message, ms: Date.now() - start });
+      });
+    });
+
+  const results = await Promise.all([testPort(25), testPort(465), testPort(587), testPort(2525)]);
+  return res.json({ resolvedIp: address, results });
+});
+
 //Logare Admin
 router.post("/auth/admin/login", async (req, res) => {
   const { email, parola } = req.body;
