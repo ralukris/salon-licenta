@@ -11,6 +11,9 @@ const transporter = nodemailer.createTransport({
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASSWORD,
   },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
 });
 
 const router = express.Router();
@@ -369,14 +372,6 @@ router.post("/auth/forgot-password", async (req, res) => {
     );
 
     const resetLink = `https://salon-licenta.vercel.app/reset-password/${resetToken}`;
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
-    });
 
     await transporter.sendMail({
       from: `"Raluca's Beauty Salon" <${process.env.GMAIL_USER}>`,
