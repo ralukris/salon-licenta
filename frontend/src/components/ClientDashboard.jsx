@@ -73,7 +73,7 @@ function ClientDashboard({ token, user, profiles, programari, onLogout, onFetchC
   const handleDeleteProfile = async () => {
     if (!editingProfileId) return;
     const confirmed = window.confirm(
-      "Sigur vrei să ștergi acest profil? Profilul va putea fi recuperat doar dacă persoana își face propriul cont cu același telefon."
+      "Sigur vrei să ștergi acest profil? Contactați recepția pentru a actualiza numărul de telefon al acestei persoane și pentru a-i crea un cont propriu."
     );
     if (!confirmed) return;
 
