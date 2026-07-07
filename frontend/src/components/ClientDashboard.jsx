@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import BookingWizard from "./BookingWizard";
 
-function ClientDashboard({ token, user, profiles, programari, onLogout, onFetchClientData, onCancelBooking, onCreateProfile, onUpdateProfile, cancellingBookingId }) {
+function ClientDashboard({ token, user, profiles, programari, onLogout, onFetchClientData, onCancelBooking, onCreateProfile, onUpdateProfile, onDeleteProfile, cancellingBookingId }) {
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -16,6 +16,7 @@ function ClientDashboard({ token, user, profiles, programari, onLogout, onFetchC
   const [editData, setEditData] = useState("");
 
   const [message, setMessage] = useState("");
+  const [deletingProfile, setDeletingProfile] = useState(false);
 
   const startEditProfile = (profile) => {
     setEditingProfileId(profile.id_client);
@@ -66,6 +67,25 @@ function ClientDashboard({ token, user, profiles, programari, onLogout, onFetchC
       cancelEditProfile();
     } catch (err) {
       setMessage(err.message || "Eroare la actualizare profil.");
+    }
+  };
+
+  const handleDeleteProfile = async () => {
+    if (!editingProfileId) return;
+    const confirmed = window.confirm(
+      "Sigur vrei să ștergi acest profil? Profilul va putea fi recuperat doar dacă persoana își face propriul cont cu același telefon."
+    );
+    if (!confirmed) return;
+
+    setMessage("");
+    setDeletingProfile(true);
+    try {
+      await onDeleteProfile(editingProfileId);
+      cancelEditProfile();
+    } catch (err) {
+      setMessage(err.message || "Eroare la ștergere profil.");
+    } finally {
+      setDeletingProfile(false);
     }
   };
 
@@ -182,6 +202,14 @@ function ClientDashboard({ token, user, profiles, programari, onLogout, onFetchC
               <button type="submit" className="primary-btn">Salvează modificările</button>
               <button type="button" className="secondary-btn" onClick={cancelEditProfile}>
                 Renunță
+              </button>
+              <button
+                type="button"
+                className="danger-btn"
+                onClick={handleDeleteProfile}
+                disabled={deletingProfile}
+              >
+                {deletingProfile ? "Se șterge..." : "Șterge profilul"}
               </button>
             </div>
           </form>

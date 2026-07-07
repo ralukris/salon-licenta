@@ -185,6 +185,18 @@ function App() {
     setMessage(data.message || "Profil actualizat cu succes.");
   };
 
+  const handleDeleteProfile = async (id) => {
+    const res = await fetch(`${API_URL}/client/profiles/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (res.status === 401 || res.status === 403) { logout(); return; }
+    if (!res.ok) throw new Error(data.error || "Eroare la ștergere profil");
+    setProfiles((prev) => prev.filter((p) => p.id_client !== id));
+    setMessage(data.message || "Profil șters cu succes.");
+  };
+
   useEffect(() => {
     fetchClientData();
   }, [token, role]);
@@ -341,6 +353,7 @@ function App() {
                   onCancelBooking={handleCancelBooking}
                   onCreateProfile={handleCreateProfile}
                   onUpdateProfile={handleUpdateProfile}
+                  onDeleteProfile={handleDeleteProfile}
                   cancellingBookingId={cancellingBookingId}
                 />
               </div>

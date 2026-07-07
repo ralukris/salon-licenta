@@ -141,6 +141,72 @@ router.patch("/client/profiles/:id_client", requireAuth, async (req, res) => {
   }
 });
 
+// Stergere profil (dezasociere de cont, nu se sterge din clienti)
+// Ramane in tabela clienti fara id_cont, ca sa poata fi "adoptat" ulterior
+// de un cont nou creat cu acelasi telefon (vezi /auth/client/register)
+router.delete("/client/profiles/:id_client", requireAuth, async (req, res) => {
+  const id_client = Number(req.params.id_client);
+  const id_cont = req.user.id_cont;
+
+  if (!Number.isInteger(id_client)) {
+    return res.status(400).json({ error: "ID client invalid" });
+  }
+
+  try {
+    const ownershipRes = await db.query(
+      `
+      SELECT id_client
+      FROM clienti
+      WHERE id_client = $1
+        AND id_cont = $2
+      LIMIT 1
+      `,
+      [id_client, id_cont]
+    );
+
+    if (ownershipRes.rows.length === 0) {
+      return res.status(404).json({
+        error: "Profil inexistent sau nu ai acces la el",
+      });
+    }
+
+    const activeBookingsRes = await db.query(
+      `
+      SELECT 1
+      FROM programare_servicii ps
+      JOIN programari p ON p.id_programare = ps.id_programare
+      WHERE p.id_client = $1
+        AND p.status = 'Confirmata'
+        AND ps.data_start > now()
+      LIMIT 1
+      `,
+      [id_client]
+    );
+
+    if (activeBookingsRes.rows.length > 0) {
+      return res.status(400).json({
+        error:
+          "Profilul are programări viitoare active. Anulează-le înainte de a șterge profilul.",
+      });
+    }
+
+    await db.query(
+      `
+      UPDATE clienti
+      SET id_cont = NULL
+      WHERE id_client = $1
+        AND id_cont = $2
+      `,
+      [id_client, id_cont]
+    );
+
+    return res.json({ message: "Profil șters cu succes" });
+  } catch (err) {
+    console.error("Eroare DELETE /client/profiles/:id_client:", err);
+    return res.status(500).json({ error: "Eroare la ștergere profil" });
+  }
+});
+
 //Programări client
 // 1 rând = 1 segment din programare
 router.get("/client/programari", requireAuth, async (req, res) => {
